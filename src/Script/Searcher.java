@@ -1,68 +1,77 @@
 package Script;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Searcher {
 
-    private String path = null;
-    private String ext = null;
-    private boolean hidden = false;
     private int fileCount = 0;
+    private double totalSize = 0;
+    private String measure = "B";
+    private int folderCount = 0;
+    private ArrayList<Thread> threads = new ArrayList<Thread>();
+    private Semaphore sem = new Semaphore(1);
+    private User user;
 
-    Searcher() {
+    Searcher(User user) {
+        this.user = user;
     }
 
     public void searchDir(String path, String ext, boolean hidden) {
-        this.path = path;
-        this.ext = ext;
-        this.hidden = hidden;
-        split.start();
+        SearchThread begin = new SearchThread(path, ext, hidden, this, sem);
+        addThread(begin);
+        begin.start();
+    }
+
+    public void addThread(Thread thread) {
+        threads.add(thread);
+    }
+
+    public void removeThread(Thread thread) {
+        threads.remove(thread);
+        if (threads.size() == 0) {
+            user.output();
+        }
+    }
+
+    public ArrayList<Thread> getThreads() {
+        return threads;
     }
 
     public int getFileCount() {
         return fileCount;
     }
 
-    private Thread split = new Thread() {
-        public void run() {
-            File dir = new File(path);
-            File[] directories = null;
-            File[] files = null;
-            if (hidden == false) {
-                directories = dir.listFiles((file) -> file.isDirectory() && !file.isHidden());
-            }
-            else {
-                directories = dir.listFiles((file) -> file.isDirectory());
-            }
-            if (ext != null) {
-                if (hidden == false) {
-                    files = dir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().endsWith(ext));
-                }
-                else {
-                    files = dir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
-                }
-            }
-            else {
-                if (hidden == false ) {
-                    files = dir.listFiles((file) -> file.isFile() && !file.isHidden());
-                }
-                else {
-                    files = dir.listFiles((file) -> file.isFile());
-                }
-            }
-            if (directories != null) { 
-                for (File file : directories) {
-                    path = file.getAbsolutePath();
-                    run();
-                }
-            }
-            if (files != null) {
-                for (File file : files) {
-                    System.out.println(file.getName());
-                    fileCount++;
-                }
-            }
+    public double getTotalSize() {
+        if (totalSize > 1000000.0 && measure == "B") {
+            totalSize /= 1000000.0;
+            measure = "MB";
         }
-    };
+        if (totalSize > 1000.0 && measure == "MB") {
+            totalSize /= 1000.0;
+            measure = "GB";
+        }
+        return totalSize;
+    }
+
+    public String getMeasure() {
+        return measure;
+    }
+
+    public int getFolderCount() {
+        return folderCount;
+    }
+
+    public void folderInc() {
+        folderCount++;
+    }
+
+    public void fileInc() {
+        fileCount++;
+    }
+
+    public void sizeInc(double amount) {
+        totalSize += amount;
+    }
 
 }
