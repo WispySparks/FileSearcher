@@ -12,13 +12,14 @@ public class Searcher {
     private ArrayList<Thread> threads = new ArrayList<Thread>();
     private Semaphore sem = new Semaphore(1);
     private User user;
+    public SearchThread begin;
 
     Searcher(User user) {
         this.user = user;
     }
 
-    public void searchDir(String path, String ext, boolean hidden) {
-        SearchThread begin = new SearchThread(path, ext, hidden, this, sem);
+    public void searchDir(String path, String name, String ext, boolean hidden) {
+        begin = new SearchThread(path, name, ext, hidden, this, sem);
         addThread(begin);
         begin.start();
     }
@@ -29,6 +30,7 @@ public class Searcher {
 
     public void removeThread(Thread thread) {
         threads.remove(thread);
+        System.out.println(threads.size());
         if (threads.size() == 0) {
             user.output();
         }

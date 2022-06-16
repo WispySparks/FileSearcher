@@ -9,13 +9,15 @@ import java.util.concurrent.Semaphore;
 public class SearchThread extends Thread {
 
     private String path = null;
+    private String name = null;
     private String ext = null;
     private boolean hidden = false;
     private Searcher searcher = null;
     private Semaphore sem = null;
 
-    SearchThread(String path, String ext, boolean hidden, Searcher searcher, Semaphore sem) {
+    SearchThread(String path, String name, String ext, boolean hidden, Searcher searcher, Semaphore sem) {
         this.path = path;
+        this.name = name;
         this.ext = ext;
         this.hidden = hidden;
         this.searcher = searcher;
@@ -46,7 +48,7 @@ public class SearchThread extends Thread {
             for (File file : directories) {
                 searcher.folderInc();
                 path = file.getAbsolutePath();
-                SearchThread sThread = new SearchThread(path, ext, hidden, searcher, sem);
+                SearchThread sThread = new SearchThread(path, name, ext, hidden, searcher, sem);
                 searcher.addThread(sThread);
                 sThread.start();
             }
@@ -65,5 +67,41 @@ public class SearchThread extends Thread {
         searcher.removeThread(this);
         sem.release();
     }
+
+    // public void run() {
+    //     File dir = new File(path);
+    //     File[] directories = null;
+    //     File[] files = null;
+    //     if (hidden == false) {
+    //         directories = dir.listFiles((file) -> file.isDirectory() && !file.isHidden());
+    //     }
+    //     else {
+    //         directories = dir.listFiles((file) -> file.isDirectory());
+    //     }
+    //     if (hidden == false) {
+    //         files = dir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().endsWith(ext));
+    //     }
+    //     else {
+    //         files = dir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
+    //     }
+    //     if (directories != null) { 
+    //         for (File file : directories) {
+    //             searcher.folderInc();
+    //             path = file.getAbsolutePath();
+    //             run();
+    //         }
+    //     }
+    //     if (files != null) {
+    //         for (File file : files) {
+    //             // System.out.println(file.getName());
+    //             searcher.fileInc();
+    //             try {
+    //             searcher.sizeInc((double) Files.size(Paths.get(file.getAbsolutePath())));
+    //             } catch (IOException e) {
+    //             System.out.println(e);
+    //             }
+    //         }
+    //     }
+    // }
 
 }
