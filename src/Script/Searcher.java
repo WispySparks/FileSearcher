@@ -4,6 +4,7 @@ import java.util.concurrent.locks.*;
 
 public class Searcher {
 
+    public static int maxThreads = 16;
     private int fileCount = 0;
     private double totalSize = 0;
     private String measure = "B";
@@ -11,7 +12,6 @@ public class Searcher {
     private int threadCount = 0;
     private Lock lock = new ReentrantLock();
     private User user;
-    public SearchThread begin;
 
     Searcher(User user) {
         this.user = user;
@@ -19,7 +19,7 @@ public class Searcher {
 
     public void searchDir(String path, String name, String ext, boolean hidden) {
         changeThread(1);
-        begin = new SearchThread(path, name, ext, hidden, this);
+        SearchThread begin = new SearchThread(path, name, ext, hidden, this);
         begin.start();
     }
 
@@ -30,7 +30,6 @@ public class Searcher {
         } finally {
             lock.unlock();
         }
-        System.out.println(threadCount);
         if (threadCount == 0) {
             user.output();
         }
@@ -45,12 +44,12 @@ public class Searcher {
     }
 
     public double getTotalSize() {
-        if (totalSize > 1000000.0 && measure == "B") {
-            totalSize /= 1000000.0;
+        if (totalSize > 1048576.0 && measure == "B") {
+            totalSize /= 1048576.0;
             measure = "MB";
         }
-        if (totalSize > 1000.0 && measure == "MB") {
-            totalSize /= 1000.0;
+        if (totalSize > 1024.0 && measure == "MB") {
+            totalSize /= 1024.0;
             measure = "GB";
         }
         return totalSize;

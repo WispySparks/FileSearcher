@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class SearchThread extends Thread {
 
@@ -17,6 +16,7 @@ public class SearchThread extends Thread {
     private ArrayList<File> directories = new ArrayList<File>();
     private ArrayList<File> doneDirs = new ArrayList<File>();
     private File[] files = null;
+    private int recursion = 0;
 
     SearchThread(String path, String name, String ext, boolean hidden, Searcher searcher) {
         this.path = path;
@@ -47,24 +47,9 @@ public class SearchThread extends Thread {
         else {
             files = startDir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
         }
-        if (directories != null) { 
-            for (File file : directories) {
-                searcher.folderInc();
-                this.path = file.getAbsolutePath();
-                if (searcher.getThreadCount() < 8) {
-                    doneDirs.add(file);
-                    SearchThread sThread = new SearchThread(path, name, ext, hidden, searcher);
-                    searcher.changeThread(1);
-                    sThread.start();
-                }
-                else {
-                    run();
-                }
-            }
-        }
         if (files != null) {
             for (File file : files) {
-                // System.out.println(file.getName());
+                //System.out.println(file.getName());
                 searcher.fileInc();
                 try {
                 searcher.sizeInc((double) Files.size(Paths.get(file.getAbsolutePath())));
@@ -73,6 +58,26 @@ public class SearchThread extends Thread {
                 }
             }
         }
+        if (directories.size() != 0) { 
+            for (File file : directories) {
+                searcher.folderInc();
+                this.path = file.getAbsolutePath();
+                doneDirs.add(file);
+                if (searcher.getThreadCount() < Searcher.maxThreads) {
+                    SearchThread sThread = new SearchThread(path, name, ext, hidden, searcher);
+                    searcher.changeThread(1);
+                    sThread.start();
+                }
+                else {
+                    recursion++;
+                    run();
+                    recursion--;
+                    break;
+                }
+            }
+        }
+        if (recursion == 0) {
+            searcher.changeThread(-1);
+        }
     }
-
 }

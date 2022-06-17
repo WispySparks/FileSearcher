@@ -28,8 +28,8 @@ public class User {
     public void output() {
         long end = System.nanoTime();
         System.out.println("Time Took: " + (double) (end-start)/1000000000 + " Seconds");
-        System.out.println("File Count: " + search.getFileCount());
-        System.out.println("Folder Count: " + search.getFolderCount());
+        System.out.println("File Count: ~" + search.getFileCount());
+        System.out.println("Folder Count: ~" + search.getFolderCount());
         System.out.println("Total Size: " + search.getTotalSize() + " " + search.getMeasure());
     }
     
