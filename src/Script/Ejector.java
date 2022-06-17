@@ -7,10 +7,10 @@ import java.io.InputStreamReader;
 public class Ejector {
 
     Ejector() {
-        runPowerShell();
+
     }
 
-    private void runPowerShell() {
+    public void ejectDrive() {
             //ProcessBuilder builder = new ProcessBuilder("powershell.exe", "$driveEject = New-Object -comObject Shell.Application; $driveEject.Namespace(17).ParseName(\"D:\").InvokeVerb(\"Eject\")");
         try {
             //Process proc = builder.start();

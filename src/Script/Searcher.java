@@ -1,7 +1,6 @@
 package Script;
 
-import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.*;
 
 public class Searcher {
 
@@ -9,8 +8,8 @@ public class Searcher {
     private double totalSize = 0;
     private String measure = "B";
     private int folderCount = 0;
-    private ArrayList<Thread> threads = new ArrayList<Thread>();
-    private Semaphore sem = new Semaphore(1);
+    private int threadCount = 0;
+    private Lock lock = new ReentrantLock();
     private User user;
     public SearchThread begin;
 
@@ -19,25 +18,26 @@ public class Searcher {
     }
 
     public void searchDir(String path, String name, String ext, boolean hidden) {
-        begin = new SearchThread(path, name, ext, hidden, this, sem);
-        addThread(begin);
+        changeThread(1);
+        begin = new SearchThread(path, name, ext, hidden, this);
         begin.start();
     }
 
-    public void addThread(Thread thread) {
-        threads.add(thread);
-    }
-
-    public void removeThread(Thread thread) {
-        threads.remove(thread);
-        System.out.println(threads.size());
-        if (threads.size() == 0) {
+    public void changeThread(int amount) {
+        lock.lock();
+        try {
+            threadCount += amount;
+        } finally {
+            lock.unlock();
+        }
+        System.out.println(threadCount);
+        if (threadCount == 0) {
             user.output();
         }
     }
 
-    public ArrayList<Thread> getThreads() {
-        return threads;
+    public int getThreadCount() {
+        return threadCount;
     }
 
     public int getFileCount() {

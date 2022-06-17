@@ -23,11 +23,6 @@ public class User {
         start = System.nanoTime();
         search.searchDir(path, "", extension, hidden);
         // 138.173 sec  374658 files  104226 folders,      93.637 seconds 1 thread, 4 core 8 logical processor, use 8 threads
-        // try {
-        //     search.begin.join();
-        // } catch (InterruptedException e) {
-        // }
-        // output();
     }
 
     public void output() {

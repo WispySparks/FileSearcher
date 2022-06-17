@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class SearchThread extends Thread {
 
@@ -13,44 +14,52 @@ public class SearchThread extends Thread {
     private String ext = null;
     private boolean hidden = false;
     private Searcher searcher = null;
-    private Semaphore sem = null;
+    private ArrayList<File> directories = new ArrayList<File>();
+    private ArrayList<File> doneDirs = new ArrayList<File>();
+    private File[] files = null;
 
-    SearchThread(String path, String name, String ext, boolean hidden, Searcher searcher, Semaphore sem) {
+    SearchThread(String path, String name, String ext, boolean hidden, Searcher searcher) {
         this.path = path;
         this.name = name;
         this.ext = ext;
         this.hidden = hidden;
         this.searcher = searcher;
-        this.sem = sem;
     }
 
     public void run() {
-        try {
-            sem.acquire();
-        } catch (Exception e) {
-        }
-        File dir = new File(path);
-        File[] directories = null;
-        File[] files = null;
+        File startDir = new File(path);
+        File[] newDirs = null;
+        directories.removeAll(doneDirs);
         if (hidden == false) {
-            directories = dir.listFiles((file) -> file.isDirectory() && !file.isHidden());
+            newDirs = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden());
         }
         else {
-            directories = dir.listFiles((file) -> file.isDirectory());
+            newDirs = startDir.listFiles((file) -> file.isDirectory());
+        }
+        if (newDirs != null) {
+            for (File dir : newDirs) {
+                directories.add(dir);
+            }
         }
         if (hidden == false) {
-            files = dir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().endsWith(ext));
+            files = startDir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().endsWith(ext));
         }
         else {
-            files = dir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
+            files = startDir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
         }
         if (directories != null) { 
             for (File file : directories) {
                 searcher.folderInc();
-                path = file.getAbsolutePath();
-                SearchThread sThread = new SearchThread(path, name, ext, hidden, searcher, sem);
-                searcher.addThread(sThread);
-                sThread.start();
+                this.path = file.getAbsolutePath();
+                if (searcher.getThreadCount() < 8) {
+                    doneDirs.add(file);
+                    SearchThread sThread = new SearchThread(path, name, ext, hidden, searcher);
+                    searcher.changeThread(1);
+                    sThread.start();
+                }
+                else {
+                    run();
+                }
             }
         }
         if (files != null) {
@@ -64,44 +73,6 @@ public class SearchThread extends Thread {
                 }
             }
         }
-        searcher.removeThread(this);
-        sem.release();
     }
-
-    // public void run() {
-    //     File dir = new File(path);
-    //     File[] directories = null;
-    //     File[] files = null;
-    //     if (hidden == false) {
-    //         directories = dir.listFiles((file) -> file.isDirectory() && !file.isHidden());
-    //     }
-    //     else {
-    //         directories = dir.listFiles((file) -> file.isDirectory());
-    //     }
-    //     if (hidden == false) {
-    //         files = dir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().endsWith(ext));
-    //     }
-    //     else {
-    //         files = dir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
-    //     }
-    //     if (directories != null) { 
-    //         for (File file : directories) {
-    //             searcher.folderInc();
-    //             path = file.getAbsolutePath();
-    //             run();
-    //         }
-    //     }
-    //     if (files != null) {
-    //         for (File file : files) {
-    //             // System.out.println(file.getName());
-    //             searcher.fileInc();
-    //             try {
-    //             searcher.sizeInc((double) Files.size(Paths.get(file.getAbsolutePath())));
-    //             } catch (IOException e) {
-    //             System.out.println(e);
-    //             }
-    //         }
-    //     }
-    // }
 
 }
