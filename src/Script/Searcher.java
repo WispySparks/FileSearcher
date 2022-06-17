@@ -44,8 +44,12 @@ public class Searcher {
     }
 
     public double getTotalSize() {
-        if (totalSize > 1048576.0 && measure == "B") {
-            totalSize /= 1048576.0;
+        if (totalSize > 1024.0 && measure == "B") {
+            totalSize /= 1024.0;
+            measure = "KB";
+        }
+        if (totalSize > 1024.0 && measure == "KB") {
+            totalSize /= 1024.0;
             measure = "MB";
         }
         if (totalSize > 1024.0 && measure == "MB") {
