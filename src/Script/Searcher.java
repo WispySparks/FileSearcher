@@ -11,13 +11,12 @@ public class Searcher {
     private int folderCount = 0;
     private int threadCount = 0;
     private Lock lock = new ReentrantLock();
-    private User user;
+    private long start = 0;
 
-    Searcher(User user) {
-        this.user = user;
-    }
+    Searcher() {}
 
     public void searchDir(String path, String name, String ext, boolean hidden) {
+        start = System.nanoTime();
         changeThread(1);
         SearchThread begin = new SearchThread(path, name, ext, hidden, this);
         begin.start();
@@ -31,7 +30,18 @@ public class Searcher {
             lock.unlock();
         }
         if (threadCount == 0) {
-            user.output();
+            long end = System.nanoTime();
+            System.out.println("Search has Concluded");
+            System.out.println("Time Took: " + (double) (end-start)/1000000000 + " Seconds");
+            System.out.println("File Count: ~" + getFileCount());
+            System.out.println("Folder Count: ~" + getFolderCount());
+            System.out.println("Total Size: " + getTotalSize() + " " + getMeasure());
+            fileCount = 0;
+            totalSize = 0;
+            measure = "B";
+            folderCount = 0;
+            threadCount = 0;
+            start = 0;
         }
     }
 

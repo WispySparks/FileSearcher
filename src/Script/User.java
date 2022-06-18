@@ -11,7 +11,7 @@ public class User {
 
     public void input() {
         Scanner scanner = new Scanner(System.in);
-        search = new Searcher(this);
+        search = new Searcher();
         System.out.println("Caps don't matter and just use single slashes");
         System.out.println("Write the path you would like to search: ");
         String path = scanner.nextLine();
