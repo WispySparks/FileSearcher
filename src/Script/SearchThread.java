@@ -26,7 +26,7 @@ public class SearchThread extends Thread {
         this.searcher = searcher;
     }
 
-    public void run() {
+    public void run() {// I'm using File.listFiles, Files.list seems to have same results and response time but more complicated
         File startDir = new File(path);
         File[] newDirs = null;
         directories.removeAll(doneDirs);
@@ -49,7 +49,7 @@ public class SearchThread extends Thread {
         }
         if (files != null) {
             for (File file : files) {
-                //System.out.println(file.getName());
+                // System.out.println(file.getName());
                 searcher.fileInc();
                 try {
                 searcher.sizeInc((double) Files.size(Paths.get(file.getAbsolutePath())));
