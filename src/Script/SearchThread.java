@@ -42,14 +42,14 @@ public class SearchThread extends Thread {
             }
         }
         if (hidden == false) {
-            files = startDir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().endsWith(ext));
+            files = startDir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName().toLowerCase()).contains(name));
         }
         else {
-            files = startDir.listFiles((file) -> file.isFile() && file.getName().endsWith(ext));
+            files = startDir.listFiles((file) -> file.isFile() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName()).contains(name));
         }
         if (files != null) {
             for (File file : files) {
-                // System.out.println(file.getName());
+                searcher.addFile(file);
                 searcher.fileInc();
                 try {
                 searcher.sizeInc((double) Files.size(Paths.get(file.getAbsolutePath())));
@@ -79,5 +79,13 @@ public class SearchThread extends Thread {
         if (recursion == 0) {
             searcher.changeThread(-1);
         }
+    }
+
+    public String chopExt(String s) {
+        int dot = s.lastIndexOf(".");
+        if (dot == -1) {
+            dot = s.length();
+        }
+        return s.substring(0, dot);
     }
 }

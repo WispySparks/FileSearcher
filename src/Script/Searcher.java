@@ -1,5 +1,7 @@
 package Script;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.locks.*;
 
 public class Searcher {
@@ -12,6 +14,7 @@ public class Searcher {
     private int threadCount = 0;
     private Lock lock = new ReentrantLock();
     private long start = 0;
+    private ArrayList<File> fileResults = new ArrayList<File>();
 
     Searcher() {}
 
@@ -36,6 +39,11 @@ public class Searcher {
             System.out.println("File Count: ~" + getFileCount());
             System.out.println("Folder Count: ~" + getFolderCount());
             System.out.println("Total Size: " + getTotalSize() + " " + getMeasure());
+            System.out.println("Files: ");
+            for (File file : fileResults) {
+                System.out.println(file.getName());
+            }
+            fileResults.clear();
             fileCount = 0;
             totalSize = 0;
             measure = "B";
@@ -47,6 +55,10 @@ public class Searcher {
 
     public int getThreadCount() {
         return threadCount;
+    }
+
+    public void addFile(File file) {
+        fileResults.add(file);
     }
 
     public int getFileCount() {
