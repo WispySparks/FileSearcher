@@ -18,7 +18,10 @@ public class DividerPane extends SplitPane {
     private void setUp() {
         this.setBackground(new Background(new BackgroundFill(Color.rgb(54, 57, 63, 1), null, null)));
         this.setPadding(new Insets(0, 0, 0, 0));
-        this.getItems().addAll(new FilePane(searcher));
+        FilePane[] panes = {new FilePane(searcher, FilePane.Type.NAME), new FilePane(searcher, FilePane.Type.PATH)};
+        this.getItems().addAll(panes[0], panes[1]);
+        // this.setDividerPositions(.5, .5);
+        searcher.setPanes(panes);
         // name, last modified, file type/extension, size, path
     }
 

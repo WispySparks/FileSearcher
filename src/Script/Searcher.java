@@ -15,21 +15,25 @@ public class Searcher {
     private Lock lock = new ReentrantLock();
     private long start = 0;
     private ArrayList<File> fileResults = new ArrayList<File>();
-    private FilePane pane;
+    private FilePane[] panes;
+    private boolean inProgress = false;
 
     Searcher() {}
 
     public void searchDir(String path, String name, String ext, boolean hidden) {
-        fileResults.clear();
-        fileCount = 0;
-        totalSize = 0;
-        measure = "B";
-        folderCount = 0;
-        threadCount = 0;
-        start = System.nanoTime();
-        changeThread(1);
-        SearchThread begin = new SearchThread(path, name, ext, hidden, this);
-        begin.start();
+        if (inProgress == false) {
+            inProgress = true;
+            fileResults.clear();
+            fileCount = 0;
+            totalSize = 0;
+            measure = "B";
+            folderCount = 0;
+            threadCount = 0;
+            start = System.nanoTime();
+            changeThread(1);
+            SearchThread begin = new SearchThread(path, name, ext, hidden, this);
+            begin.start();
+        }
     }
 
     public void changeThread(int amount) {
@@ -40,6 +44,7 @@ public class Searcher {
             lock.unlock();
         }
         if (threadCount == 0) {
+            inProgress = false;
             long end = System.nanoTime();
             System.out.println("Search has Concluded");
             System.out.println("Time Took: " + (double) (end-start)/1000000000 + " Seconds");
@@ -47,10 +52,9 @@ public class Searcher {
             System.out.println("Folder Count: ~" + getFolderCount());
             System.out.println("Total Size: " + getTotalSize() + " " + getMeasure());
             System.out.println("Files: ");
-            for (File file : fileResults) {
-                System.out.println(file.getName());
+            for (FilePane pane : panes) {
+                pane.update();
             }
-            pane.update();
         }
     }
 
@@ -106,8 +110,8 @@ public class Searcher {
         totalSize += amount;
     }
 
-    public void setPane(FilePane pane) {
-        this.pane = pane;
+    public void setPanes(FilePane[] panes) {
+        this.panes = panes;
     }
 
 }
