@@ -3,11 +3,11 @@ package Script;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 
-public class BottomPane extends ScrollPane {
+public class SlidePane extends ScrollPane {
     
     Searcher searcher;
 
-    BottomPane(Searcher searcher) {
+    SlidePane(Searcher searcher) {
         this.searcher = searcher;
         setUp();
     }
@@ -15,7 +15,8 @@ public class BottomPane extends ScrollPane {
     private void setUp() {
         this.setStyle("-fx-background: #36393F;");
         this.setPadding(new Insets(0, 0, 0, 0));
-        this.setContent(new FilePane(searcher));
+        this.setFitToWidth(true);
+        this.setContent(new DividerPane(searcher));
     }
 
 }
