@@ -14,10 +14,16 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     
-    Searcher searcher;
+    private Searcher searcher;
+    private TextField conField;
+    private TextField extField;
+    private TextField pathField;
+    private CheckBox hiddenBox;
+    private Text loading;
 
     TopPane(Searcher searcher) {
         this.searcher = searcher;
@@ -30,44 +36,29 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         this.setHgap(10);
         this.setVgap(5);
         Label conLabel = new Label("Contains:");
-        TextField conField = new TextField();
+        conField = new TextField();
         Label extLabel = new Label("Extension:");
-        TextField extField = new TextField();
+        extField = new TextField();
         Button startButton = new Button("Search");
         Label pathLabel = new Label("Path:");
-        TextField pathField = new TextField("C:/Users/Wispy/");
-        CheckBox hiddenBox = new CheckBox("Check Hidden Files");
-        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathLabel, pathField, hiddenBox};
+        pathField = new TextField("C:/Users/Wispy/");
+        hiddenBox = new CheckBox("Check Hidden Files");
+        loading = new Text("");
+        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathLabel, pathField, hiddenBox, loading};
         conLabel.setTextFill(Color.WHITE);
         pathLabel.setTextFill(Color.WHITE);
         extLabel.setTextFill(Color.WHITE);
         hiddenBox.setTextFill(Color.WHITE);
+        loading.setStyle("-fx-text-fill: white;");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
+                loading.setText("Searching . . .");
             }});
-        conField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
-                }                
-            }});
-        extField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
-                }                
-            }});
-        pathField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
-                }                
-            }});
+        conField.setOnKeyPressed(enter);
+        extField.setOnKeyPressed(enter);
+        pathField.setOnKeyPressed(enter);
         TopPane.setConstraints(conField, 1, 0);
         TopPane.setConstraints(extLabel, 2, 0);
         TopPane.setConstraints(extField, 3, 0);
@@ -75,9 +66,20 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         TopPane.setConstraints(pathLabel, 0, 1);
         TopPane.setConstraints(pathField, 1, 1, 3, 1);
         TopPane.setConstraints(startButton, 4, 1);
+        TopPane.setConstraints(loading, 5, 1);
         for (Node node : elements) {
             this.getChildren().add(node);
         }
     }
+
+    EventHandler<KeyEvent> enter = new EventHandler<KeyEvent>() {
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.getCode() == KeyCode.ENTER) {
+                searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
+                loading.setText("Searching . . .");
+            }                
+        }
+    };
 
 }

@@ -5,7 +5,7 @@ import javafx.scene.control.ScrollPane;
 
 public class SlidePane extends ScrollPane {
     
-    Searcher searcher;
+    private Searcher searcher;
 
     SlidePane(Searcher searcher) {
         this.searcher = searcher;

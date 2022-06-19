@@ -4,12 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.locks.*;
 
+import javafx.util.Pair;
+
 public class Searcher {
 
     public static int maxThreads = 16;
     private int fileCount = 0;
     private double totalSize = 0;
-    private String measure = "B";
     private int folderCount = 0;
     private int threadCount = 0;
     private Lock lock = new ReentrantLock();
@@ -26,7 +27,6 @@ public class Searcher {
             fileResults.clear();
             fileCount = 0;
             totalSize = 0;
-            measure = "B";
             folderCount = 0;
             threadCount = 0;
             start = System.nanoTime();
@@ -50,8 +50,7 @@ public class Searcher {
             System.out.println("Time Took: " + (double) (end-start)/1000000000 + " Seconds");
             System.out.println("File Count: ~" + getFileCount());
             System.out.println("Folder Count: ~" + getFolderCount());
-            System.out.println("Total Size: " + getTotalSize() + " " + getMeasure());
-            System.out.println("Files: ");
+            System.out.println("Total Size: " + getFormatSize(totalSize).getKey() + " " + getFormatSize(totalSize).getValue());
             for (FilePane pane : panes) {
                 pane.update();
             }
@@ -73,25 +72,22 @@ public class Searcher {
     public int getFileCount() {
         return fileCount;
     }
-
-    public double getTotalSize() {
-        if (totalSize > 1024.0 && measure == "B") {
-            totalSize /= 1024.0;
+    public Pair<Double, String> getFormatSize(double size) {
+        String measure = "B";
+        if (size > 1024.0 && measure == "B") {
+            size /= 1024.0;
             measure = "KB";
         }
-        if (totalSize > 1024.0 && measure == "KB") {
-            totalSize /= 1024.0;
+        if (size > 1024.0 && measure == "KB") {
+            size /= 1024.0;
             measure = "MB";
         }
-        if (totalSize > 1024.0 && measure == "MB") {
-            totalSize /= 1024.0;
+        if (size > 1024.0 && measure == "MB") {
+            size /= 1024.0;
             measure = "GB";
         }
-        return totalSize;
-    }
-
-    public String getMeasure() {
-        return measure;
+        size = Math.round(size*100) / 100;
+        return new Pair<Double,String>(size, measure);
     }
 
     public int getFolderCount() {
