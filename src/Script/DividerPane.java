@@ -9,19 +9,21 @@ import javafx.scene.paint.Color;
 public class DividerPane extends SplitPane {
     
     private Searcher searcher;
+    private SlidePane slidePane;
 
-    DividerPane(Searcher searcher) {
+    DividerPane(Searcher searcher, SlidePane slidePane) {
         this.searcher = searcher;
+        this.slidePane = slidePane;
         setUp();
     }
 
     private void setUp() {
         this.setBackground(new Background(new BackgroundFill(Color.rgb(54, 57, 63, 1), null, null)));
         this.setPadding(new Insets(0, 0, 0, 0));
-        FilePane[] panes = {new FilePane(searcher, FilePane.Type.NAME), new FilePane(searcher, FilePane.Type.PATH), new FilePane(searcher, FilePane.Type.EXT), new FilePane(searcher, FilePane.Type.SIZE)};
+        FilePane[] panes = {new FilePane(searcher, FilePane.Type.NAME, slidePane), new FilePane(searcher, FilePane.Type.PATH, slidePane), new FilePane(searcher, FilePane.Type.EXT, slidePane), new FilePane(searcher, FilePane.Type.SIZE, slidePane)};
         this.getItems().addAll(panes[0], panes[1], panes[2], panes[3]);
         this.setDividerPositions(.3, .7, .85);
-        searcher.setPanes(panes);
+        searcher.setPanes(panes, null);
         // name, last modified, file type/extension, size, path
     }
 

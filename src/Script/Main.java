@@ -20,7 +20,6 @@ public class Main extends Application {     // Application and Stage is the JFra
         mainStage.getIcons().add(new Image("file:./resources/Wiggle.png"));
         mainStage.setTitle("File Searcher");
         mainStage.setScene(mainScene);
-        mainStage.setResizable(false);
         mainStage.show();
     }
 }

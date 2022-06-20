@@ -17,6 +17,7 @@ public class Searcher {
     private long start = 0;
     private ArrayList<File> fileResults = new ArrayList<File>();
     private FilePane[] panes;
+    private TopPane tPane;
     private boolean inProgress = false;
 
     Searcher() {}
@@ -54,6 +55,7 @@ public class Searcher {
             for (FilePane pane : panes) {
                 pane.update();
             }
+            tPane.update();
         }
     }
 
@@ -106,8 +108,13 @@ public class Searcher {
         totalSize += amount;
     }
 
-    public void setPanes(FilePane[] panes) {
-        this.panes = panes;
+    public void setPanes(FilePane[] panes, TopPane tPane) {
+        if (panes != null) {
+            this.panes = panes;
+        }
+        if (tPane != null) {
+            this.tPane = tPane;
+        }
     }
 
 }

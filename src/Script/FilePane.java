@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
@@ -16,8 +17,6 @@ import javafx.util.Pair;
 
 public class FilePane extends GridPane {
 
-    private Searcher searcher;
-    private ArrayList<Label> names = new ArrayList<Label>();
     enum Type {
         NAME,
         DATE,
@@ -25,18 +24,25 @@ public class FilePane extends GridPane {
         SIZE,
         PATH
     }
-    private Type purpose;
+    private Searcher searcher = null;
+    private ArrayList<Label> names = new ArrayList<Label>();
+    private Type purpose = null;
+    private Label header = null;
+    private SlidePane slidePane = null;
+    private String alpha = "abcdefghijklmnopqrstuvwxyz";
+    private char[] alphabet = alpha.toCharArray();
 
-    FilePane(Searcher searcher, Type purpose) {
+    FilePane(Searcher searcher, Type purpose, SlidePane slidePane) {
         this.searcher = searcher;
         this.purpose = purpose;
+        this.slidePane = slidePane;
         setUp();
     }
 
     private void setUp() {
         this.setBackground(new Background(new BackgroundFill(Color.rgb(54, 57, 63, 1), null, null)));
         this.setPadding(new Insets(0, 10, 0, 10));
-        Label label = null;
+        header = null;
         Label label0 = new Label("Name");
         Label label1 = new Label("Path");
         Label label2 = new Label("Date Modified");
@@ -44,22 +50,25 @@ public class FilePane extends GridPane {
         Label label4 = new Label("Size");
         switch (purpose) {
             case DATE:
-                label = label2;
+                header = label2;
                 break;
             case EXT:
-                label = label3;
+                header = label3;
                 break;
             case NAME:
-                label = label0;
+                header = label0;
                 break;
             case PATH:
-                label = label1;
+                header = label1;
                 break;
             case SIZE:
-                label = label4;
+                header = label4;
                 break;
         }
-        this.getChildren().add(label);
+        header.setStyle("-fx-background-color: #36393F; -fx-view-order: -1;");
+        header.setMaxWidth(Double.MAX_VALUE);
+        this.getChildren().add(header);
+        slidePane.vvalueProperty().addListener(setHeader);
     }
 
     public void update() {
@@ -69,7 +78,8 @@ public class FilePane extends GridPane {
             public void run() {
                 getChildren().removeAll(names);
                 Label label = null;
-                for (File file : searcher.getFiles()) {
+                ArrayList<File> sorted = sortFiles(searcher.getFiles());
+                for (File file : sorted) {
                     switch (purpose) {
                         case NAME:
                             label = new Label(file.getName());
@@ -108,4 +118,40 @@ public class FilePane extends GridPane {
         return s.substring(dot, s.length());
     }
 
+    public ArrayList<File> sortFiles(ArrayList<File> list) {
+        ArrayList<File> list2 = new ArrayList<File>();
+        for (int j = 0; j<5; j++) {
+            for (int i = 0; i<list.size()-1; i++) {
+                int prevIndex = alphabetIndex(list.get(i));
+                int index = alphabetIndex(list.get(i+1));
+                if (index < prevIndex) {
+                    list2.add(list.get(i+1));
+                    list2.add(list.get(i));
+                }
+                else {
+                    list2.add(list.get(i));
+                    list2.add(list.get(i+1));
+                }
+            }
+            list = list2;
+        }
+        return list2;
+    }
+
+    public int alphabetIndex(File file) {
+        int index = 0;
+        char letter = file.getName().toLowerCase().charAt(0);
+        for (int i = 0; i<alphabet.length; i++) {
+            if (letter == alphabet[i]) {
+                index = i;
+                return index;
+            }
+        }
+        return index;
+    }
+
+    InvalidationListener setHeader = (o -> {
+        final double y = (this.getHeight() - slidePane.getViewportBounds().getHeight()) * slidePane.getVvalue();
+        header.setTranslateY(y);
+    });
 }

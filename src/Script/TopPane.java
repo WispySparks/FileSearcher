@@ -14,6 +14,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
@@ -49,7 +50,9 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         pathLabel.setTextFill(Color.WHITE);
         extLabel.setTextFill(Color.WHITE);
         hiddenBox.setTextFill(Color.WHITE);
-        loading.setStyle("-fx-text-fill: white;");
+        loading.setFill(Color.WHITE);
+        loading.setFont(new Font(13));
+        startButton.setMaxWidth(Double.MAX_VALUE);
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -66,10 +69,15 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         TopPane.setConstraints(pathLabel, 0, 1);
         TopPane.setConstraints(pathField, 1, 1, 3, 1);
         TopPane.setConstraints(startButton, 4, 1);
-        TopPane.setConstraints(loading, 5, 1);
+        TopPane.setConstraints(loading, 6, 0, 1, 2);
         for (Node node : elements) {
             this.getChildren().add(node);
         }
+        searcher.setPanes(null, this);
+    }
+
+    public void update() {
+        loading.setText("Search Finished");
     }
 
     EventHandler<KeyEvent> enter = new EventHandler<KeyEvent>() {

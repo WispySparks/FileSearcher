@@ -16,7 +16,8 @@ public class SlidePane extends ScrollPane {
         this.setStyle("-fx-background: #36393F;");
         this.setPadding(new Insets(0, 0, 0, 0));
         this.setFitToWidth(true);
-        this.setContent(new DividerPane(searcher));
+        this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.setContent(new DividerPane(searcher, this));
     }
 
 }
