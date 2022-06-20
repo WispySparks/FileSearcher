@@ -44,7 +44,7 @@ public class Searcher {
         } finally {
             lock.unlock();
         }
-        if (threadCount == 0) {
+        if (threadCount == 0 && inProgress == true) {
             inProgress = false;
             long end = System.nanoTime();
             System.out.println("Search has Concluded");
