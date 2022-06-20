@@ -9,9 +9,6 @@ import javafx.util.Pair;
 public class Searcher {
 
     public static int maxThreads = 16;
-    private int fileCount = 0;
-    private double totalSize = 0;
-    private int folderCount = 0;
     private int threadCount = 0;
     private Lock lock = new ReentrantLock();
     private long start = 0;
@@ -26,13 +23,10 @@ public class Searcher {
         if (inProgress == false) {
             inProgress = true;
             fileResults.clear();
-            fileCount = 0;
-            totalSize = 0;
-            folderCount = 0;
             threadCount = 0;
-            start = System.nanoTime();
             changeThread(1);
             SearchThread begin = new SearchThread(path, name, ext, hidden, this);
+            start = System.nanoTime();
             begin.start();
         }
     }
@@ -45,13 +39,10 @@ public class Searcher {
             lock.unlock();
         }
         if (threadCount == 0 && inProgress == true) {
-            inProgress = false;
             long end = System.nanoTime();
+            inProgress = false;
             System.out.println("Search has Concluded");
-            System.out.println("Time Took: " + (double) (end-start)/1000000000 + " Seconds");
-            System.out.println("File Count: ~" + getFileCount());
-            System.out.println("Folder Count: ~" + getFolderCount());
-            System.out.println("Total Size: " + getFormatSize(totalSize).getKey() + " " + getFormatSize(totalSize).getValue());
+            System.out.println("Search Took: " + (double) (end-start)/1000000000 + " Seconds");
             for (FilePane pane : panes) {
                 pane.update();
             }
@@ -71,9 +62,6 @@ public class Searcher {
         return fileResults;
     }
 
-    public int getFileCount() {
-        return fileCount;
-    }
     public Pair<Double, String> getFormatSize(double size) {
         String measure = "B";
         if (size > 1024.0 && measure == "B") {
@@ -88,24 +76,8 @@ public class Searcher {
             size /= 1024.0;
             measure = "GB";
         }
-        size = Math.round(size*100) / 100;
+        size = Math.floor(size*100) / 100;
         return new Pair<Double,String>(size, measure);
-    }
-
-    public int getFolderCount() {
-        return folderCount;
-    }
-
-    public void folderInc() {
-        folderCount++;
-    }
-
-    public void fileInc() {
-        fileCount++;
-    }
-
-    public void sizeInc(double amount) {
-        totalSize += amount;
     }
 
     public void setPanes(FilePane[] panes, TopPane tPane) {

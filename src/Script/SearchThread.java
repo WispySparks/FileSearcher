@@ -1,9 +1,6 @@
 package Script;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SearchThread extends Thread {
@@ -50,17 +47,10 @@ public class SearchThread extends Thread {
         if (files != null) {
             for (File file : files) {
                 searcher.addFile(file);
-                searcher.fileInc();
-                try {
-                searcher.sizeInc((double) Files.size(Paths.get(file.getAbsolutePath())));
-                } catch (IOException e) {
-                System.out.println(e);
-                }
             }
         }
         if (directories.size() != 0) { 
             for (File file : directories) {
-                searcher.folderInc();
                 this.path = file.getAbsolutePath();
                 doneDirs.add(file);
                 if (searcher.getThreadCount() < Searcher.maxThreads) {

@@ -16,7 +16,7 @@ public class Main extends Application {     // Application and Stage is the JFra
     @Override
     public void start(Stage mainStage) throws Exception {    // first method that gets called after app is launched
         BorderPane borderPane = new BorderPane(new SlidePane(searcher), new TopPane(searcher), null, null, null);
-        Scene mainScene = new Scene(borderPane, 700, 500);
+        Scene mainScene = new Scene(borderPane, 775, 500);
         mainStage.getIcons().add(new Image("file:./resources/Wiggle.png"));
         mainStage.setTitle("File Searcher");
         mainStage.setScene(mainScene);

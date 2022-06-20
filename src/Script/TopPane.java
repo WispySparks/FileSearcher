@@ -24,6 +24,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     private TextField extField;
     private TextField pathField;
     private CheckBox hiddenBox;
+    private CheckBox folderBox;
     private Text loading;
 
     TopPane(Searcher searcher) {
@@ -44,14 +45,18 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         Label pathLabel = new Label("Path:");
         pathField = new TextField("C:/Users/Wispy/");
         hiddenBox = new CheckBox("Check Hidden Files");
+        folderBox = new CheckBox("Include Folders in Results");
         loading = new Text("");
-        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathLabel, pathField, hiddenBox, loading};
+        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathLabel, pathField, hiddenBox, folderBox, loading};
         conLabel.setTextFill(Color.WHITE);
         pathLabel.setTextFill(Color.WHITE);
         extLabel.setTextFill(Color.WHITE);
         hiddenBox.setTextFill(Color.WHITE);
+        folderBox.setTextFill(Color.WHITE);
         loading.setFill(Color.WHITE);
         loading.setFont(new Font(13));
+        // folderBox.setFont(new Font(10));
+        // hiddenBox.setFont(new Font(10));
         startButton.setMaxWidth(Double.MAX_VALUE);
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -69,7 +74,8 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         TopPane.setConstraints(pathLabel, 0, 1);
         TopPane.setConstraints(pathField, 1, 1, 3, 1);
         TopPane.setConstraints(startButton, 4, 1);
-        TopPane.setConstraints(loading, 6, 0, 1, 2);
+        TopPane.setConstraints(folderBox, 5, 0);
+        TopPane.setConstraints(loading, 5, 1);
         for (Node node : elements) {
             this.getChildren().add(node);
         }

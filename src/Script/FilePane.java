@@ -35,6 +35,7 @@ public class FilePane extends GridPane {
     private SlidePane slidePane = null;
     private String alpha = "abcdefghijklmnopqrstuvwxyz";
     private char[] alphabet = alpha.toCharArray();
+    private long start = 0;
 
     FilePane(Searcher searcher, Type purpose, SlidePane slidePane) {
         this.searcher = searcher;
@@ -69,22 +70,25 @@ public class FilePane extends GridPane {
                 header = label4;
                 break;
         }
-        header.setStyle("-fx-background-color: #36393F; -fx-view-order: -1;");
+        header.setStyle("-fx-background-color: #36393F; -fx-view-order: -1;"); // keep headers on top
         header.setMaxWidth(Double.MAX_VALUE);
         this.getChildren().add(header);
         slidePane.vvalueProperty().addListener(setHeader);
     }
 
-    public void update() {
+    public void update() {  // update the gui of the window for all of the new labels of the information
+        start = 0;
         Platform.runLater(new Runnable() {
             int i = 1;
             @Override
             public void run() {
-                getChildren().removeAll(names);
+                getChildren().removeAll(names);     // remove previous labels
                 Label label = null;
+                start = System.nanoTime();
                 ArrayList<File> sorted = sortFilesByAlphabet(searcher.getFiles());
+                System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
                 for (File file : sorted) {
-                    switch (purpose) {
+                    switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
                             break;
@@ -109,10 +113,10 @@ public class FilePane extends GridPane {
                             label = new Label(file.getAbsolutePath());
                             break;
                     }
-                    setConstraints(label, 0, i);
-                    getChildren().add(label);
+                    setConstraints(label, 0, i); // put the labels in the right cell
+                    getChildren().add(label);   // add label to pane
                     i++;
-                    names.add(label);
+                    names.add(label);   // add label to names so it can be removed for a future search
                 }
             }
         });
@@ -132,7 +136,7 @@ public class FilePane extends GridPane {
         for (int i = 0; i<list.size(); i++) {
             int index = 0;
             int nextIndex = 0;
-            for (int j = 0; j<3; j++) {     // letter precision of where the file's name is along the alphabet
+            for (int j = 0; j<3; j++) {     // j < value, letter precision of where the file's name is along the alphabet
                 index = alphabetIndex(list.get(i), j);
                 nextIndex = 27;
                 if (i != list.size()-1) {
@@ -156,9 +160,15 @@ public class FilePane extends GridPane {
         return list2;
     }
 
-    public int alphabetIndex(File file, int letterPos) {//find a strings position along the alphabet, letter checked is one at letterPos
+    public int alphabetIndex(File file, int letterPos) { // find a strings position along the alphabet, letter checked is one at letterPos
         int index = -1;
-        char letter = file.getName().toLowerCase().charAt(letterPos);
+        char letter;
+        if (letterPos < file.getName().length()) {
+            letter = file.getName().toLowerCase().charAt(letterPos);
+        }
+        else {
+            letter = file.getName().toLowerCase().charAt(file.getName().length()-1);
+        }
         for (int i = 0; i<alphabet.length; i++) {
             if (letter == alphabet[i]) {
                 index = i;
