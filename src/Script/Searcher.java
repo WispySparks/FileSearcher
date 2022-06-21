@@ -34,7 +34,7 @@ public class Searcher {
     }
 
     public void changeThread(int amount) {
-        lock.lock();
+        lock.lock();    // lock threadcount so that the var doesn't get screwed up by simultaneous altering
         try {
             threadCount += amount;
         } finally {

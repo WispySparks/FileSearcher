@@ -90,7 +90,7 @@ public class FilePane extends GridPane {
                 ArrayList<File> sorted = null;
                 start = System.nanoTime();
                 sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles()); 
-                if (folders !=0 ) System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
+                System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
                 for (File file : sorted) {
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
