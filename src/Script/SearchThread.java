@@ -32,11 +32,11 @@ public class SearchThread extends Thread {
         directories.removeAll(doneDirs);
         if (hidden == false) {
             newDirs = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden());
-            if (matchFolders == true) folders = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden() && file.getName().toLowerCase().contains(name));
+            if (matchFolders == true && ext == "") folders = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden() && file.getName().toLowerCase().contains(name));
         }
         else {
             newDirs = startDir.listFiles((file) -> file.isDirectory());
-            if (matchFolders == true) folders = startDir.listFiles((file) -> file.isDirectory() && file.getName().toLowerCase().contains(name));
+            if (matchFolders == true && ext == "") folders = startDir.listFiles((file) -> file.isDirectory() && file.getName().toLowerCase().contains(name));
         }
         if (newDirs != null) {
             for (File dir : newDirs) {
@@ -57,7 +57,6 @@ public class SearchThread extends Thread {
         if (folders != null) {
             for (File file : folders) {
                 searcher.addFolder(file);
-                System.out.println(file);
             }
         }
         if (directories.size() != 0) { 

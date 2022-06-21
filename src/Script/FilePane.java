@@ -85,27 +85,18 @@ public class FilePane extends GridPane {
             int folders = 0;
             @Override
             public void run() {
-                getChildren().removeAll(names);     // remove previous labels
+                if (folders == 0) getChildren().removeAll(names);     // remove previous labels
                 Label label = null;
                 ArrayList<File> sorted = null;
                 start = System.nanoTime();
-                // sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles()); 
-                if (folders == 0) {
-                    sorted = sortFilesByAlphabet(searcher.getFolders());
-                    System.out.println(sorted);
-                }
-                else {
-                    sorted = sortFilesByAlphabet(searcher.getFiles());
-                }
-                // sorted = sortFilesByAlphabet(searcher.getFolders());
+                sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles()); 
                 if (folders !=0 ) System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
                 for (File file : sorted) {
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
-                            System.out.println(file.getName());
-                            // ImageView img = (folders == 0) ? new ImageView(new Image("file:./resources/Wiggle.png")) : new ImageView(new Image("file:./resources/fileicon.png"));
-                            // label.setGraphic(img);
+                            ImageView img = (folders == 0) ? new ImageView(new Image("file:./resources/foldericon.png")) : new ImageView(new Image("file:./resources/fileicon.png"));
+                            label.setGraphic(img);
                             break;
                         case DATE:
                             Instant instance = Instant.ofEpochMilli(file.lastModified());
@@ -114,11 +105,11 @@ public class FilePane extends GridPane {
                             label = new Label(date.format(formatter));
                             break;
                         case EXT:
-                            label = new Label(getExt(file.getName()).toUpperCase() + " File");
+                            label = (folders == 0) ? new Label("File folder") : new Label(getExt(file.getName()).toUpperCase() + " File");
                             break;
                         case SIZE:
                             try {
-                                Pair<Double, String> p = searcher.getFormatSize(Files.size(Paths.get(file.getCanonicalPath())));
+                                Pair<Double, String> p = (folders == 0) ? searcher.getFormatSize(getDirSize(file)) : searcher.getFormatSize(Files.size(Paths.get(file.getCanonicalPath())));
                                 label = new Label(Double.toString(p.getKey()) + " "  + p.getValue());
                             } catch (IOException e) {
                                 System.out.println(e);
@@ -193,6 +184,16 @@ public class FilePane extends GridPane {
             }
         }
         return index;
+    }
+
+    public long getDirSize(File folder) {
+        long size = 0;
+        try {
+            size = Files.walk(Paths.get(folder.getCanonicalPath())).mapToLong(p -> p.toFile().length()).sum();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return size;
     }
 
     InvalidationListener setHeader = (o -> {    // keep the header labels at the top of the page even when scrolling down
