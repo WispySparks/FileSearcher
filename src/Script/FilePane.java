@@ -13,6 +13,8 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
@@ -80,17 +82,30 @@ public class FilePane extends GridPane {
         start = 0;
         Platform.runLater(new Runnable() {
             int i = 1;
+            int folders = 0;
             @Override
             public void run() {
                 getChildren().removeAll(names);     // remove previous labels
                 Label label = null;
+                ArrayList<File> sorted = null;
                 start = System.nanoTime();
-                ArrayList<File> sorted = sortFilesByAlphabet(searcher.getFiles());
-                System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
+                // sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles()); 
+                if (folders == 0) {
+                    sorted = sortFilesByAlphabet(searcher.getFolders());
+                    System.out.println(sorted);
+                }
+                else {
+                    sorted = sortFilesByAlphabet(searcher.getFiles());
+                }
+                // sorted = sortFilesByAlphabet(searcher.getFolders());
+                if (folders !=0 ) System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
                 for (File file : sorted) {
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
+                            System.out.println(file.getName());
+                            // ImageView img = (folders == 0) ? new ImageView(new Image("file:./resources/Wiggle.png")) : new ImageView(new Image("file:./resources/fileicon.png"));
+                            // label.setGraphic(img);
                             break;
                         case DATE:
                             Instant instance = Instant.ofEpochMilli(file.lastModified());
@@ -118,6 +133,8 @@ public class FilePane extends GridPane {
                     i++;
                     names.add(label);   // add label to names so it can be removed for a future search
                 }
+                folders++;
+                if (folders == 1) run();
             }
         });
     }

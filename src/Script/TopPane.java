@@ -1,13 +1,16 @@
 package Script;
 
-import javafx.event.ActionEvent;
+import java.io.File;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -16,10 +19,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     
     private Searcher searcher;
+    private Stage mainStage;
     private TextField conField;
     private TextField extField;
     private TextField pathField;
@@ -27,8 +33,9 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     private CheckBox folderBox;
     private Text loading;
 
-    TopPane(Searcher searcher) {
+    TopPane(Searcher searcher, Stage mainStage) {
         this.searcher = searcher;
+        this.mainStage = mainStage;
         setUp();
     }
 
@@ -42,40 +49,54 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         Label extLabel = new Label("Extension:");
         extField = new TextField();
         Button startButton = new Button("Search");
+        Button pathButton = new Button();
         Label pathLabel = new Label("Path:");
         pathField = new TextField("C:/Users/Wispy/");
         hiddenBox = new CheckBox("Check Hidden Files");
         folderBox = new CheckBox("Include Folders in Results");
         loading = new Text("");
-        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathLabel, pathField, hiddenBox, folderBox, loading};
+        DirectoryChooser chooser = new DirectoryChooser();
+        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathButton, pathLabel, pathField, hiddenBox, folderBox, loading};
         conLabel.setTextFill(Color.WHITE);
         pathLabel.setTextFill(Color.WHITE);
         extLabel.setTextFill(Color.WHITE);
         hiddenBox.setTextFill(Color.WHITE);
         folderBox.setTextFill(Color.WHITE);
         loading.setFill(Color.WHITE);
-        loading.setFont(new Font(13));
-        // folderBox.setFont(new Font(10));
-        // hiddenBox.setFont(new Font(10));
-        startButton.setMaxWidth(Double.MAX_VALUE);
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
-                loading.setText("Searching . . .");
-            }});
+        loading.setFont(new Font(14));
+        startButton.setMaxWidth(85);
+        startButton.setOnAction((event) -> {
+            searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected(), folderBox.isSelected());
+            loading.setText("Searching . . .");
+        });
+        pathButton.setPadding(new Insets(0));
+        pathButton.setMaxHeight(25.6);
+        pathButton.setMaxWidth(28);
+        pathButton.setId("pathButton");
+        ImageView img = new ImageView(new Image("file:./resources/filexplorer.png"));
+        img.setPreserveRatio(true);
+        img.fitWidthProperty().bind(pathButton.widthProperty());
+        img.fitHeightProperty().bind(pathButton.heightProperty());
+        pathButton.setGraphic(img);
+        pathButton.setOnAction((event) ->  {
+            chooser.setInitialDirectory(new File(pathField.getText()));
+            pathField.setText(chooser.showDialog(mainStage).toString());
+        });
         conField.setOnKeyPressed(enter);
         extField.setOnKeyPressed(enter);
         pathField.setOnKeyPressed(enter);
-        TopPane.setConstraints(conField, 1, 0);
-        TopPane.setConstraints(extLabel, 2, 0);
-        TopPane.setConstraints(extField, 3, 0);
-        TopPane.setConstraints(hiddenBox, 4, 0);
-        TopPane.setConstraints(pathLabel, 0, 1);
-        TopPane.setConstraints(pathField, 1, 1, 3, 1);
-        TopPane.setConstraints(startButton, 4, 1);
-        TopPane.setConstraints(folderBox, 5, 0);
-        TopPane.setConstraints(loading, 5, 1);
+        setConstraints(conField, 1, 0);
+        setConstraints(extLabel, 2, 0);
+        setConstraints(extField, 3, 0);
+        setConstraints(hiddenBox, 4, 0);
+        setConstraints(folderBox, 5, 0);
+        setConstraints(pathLabel, 0, 1);
+        setConstraints(pathField, 1, 1, 3, 1);
+        setConstraints(pathButton, 4, 1);
+        setConstraints(startButton, 4, 1);
+        setConstraints(loading, 5, 1);
+        setHalignment(startButton, HPos.RIGHT);
+        setHalignment(loading, HPos.CENTER);
         for (Node node : elements) {
             this.getChildren().add(node);
         }
@@ -90,7 +111,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         @Override
         public void handle(KeyEvent event) {
             if (event.getCode() == KeyCode.ENTER) {
-                searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected());
+                searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected(), folderBox.isSelected());
                 loading.setText("Searching . . .");
             }                
         }

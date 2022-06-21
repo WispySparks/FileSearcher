@@ -9,17 +9,20 @@ public class SearchThread extends Thread {
     private String name = null;
     private String ext = null;
     private boolean hidden = false;
+    private boolean matchFolders = false;
     private Searcher searcher = null;
-    private ArrayList<File> directories = new ArrayList<File>();
-    private ArrayList<File> doneDirs = new ArrayList<File>();
-    private File[] files = null;
+    private ArrayList<File> directories = new ArrayList<File>(); // directories to check
+    private ArrayList<File> doneDirs = new ArrayList<File>(); // directories that have been done and to remove
+    private File[] files = null; // file matches
+    private File[] folders = null; 
     private int recursion = 0;
 
-    SearchThread(String path, String name, String ext, boolean hidden, Searcher searcher) {
+    SearchThread(String path, String name, String ext, boolean hidden, boolean matchFolders, Searcher searcher) {
         this.path = path;
         this.name = name;
         this.ext = ext;
         this.hidden = hidden;
+        this.matchFolders = matchFolders;
         this.searcher = searcher;
     }
 
@@ -29,9 +32,11 @@ public class SearchThread extends Thread {
         directories.removeAll(doneDirs);
         if (hidden == false) {
             newDirs = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden());
+            if (matchFolders == true) folders = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden() && file.getName().toLowerCase().contains(name));
         }
         else {
             newDirs = startDir.listFiles((file) -> file.isDirectory());
+            if (matchFolders == true) folders = startDir.listFiles((file) -> file.isDirectory() && file.getName().toLowerCase().contains(name));
         }
         if (newDirs != null) {
             for (File dir : newDirs) {
@@ -49,12 +54,18 @@ public class SearchThread extends Thread {
                 searcher.addFile(file);
             }
         }
+        if (folders != null) {
+            for (File file : folders) {
+                searcher.addFolder(file);
+                System.out.println(file);
+            }
+        }
         if (directories.size() != 0) { 
             for (File file : directories) {
                 this.path = file.getAbsolutePath();
                 doneDirs.add(file);
                 if (searcher.getThreadCount() < Searcher.maxThreads) {
-                    SearchThread sThread = new SearchThread(path, name, ext, hidden, searcher);
+                    SearchThread sThread = new SearchThread(path, name, ext, hidden, matchFolders, searcher);
                     searcher.changeThread(1);
                     sThread.start();
                 }

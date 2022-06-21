@@ -1,0 +1,6 @@
+#pathButton {
+    -fx-background-color: transparent;
+}
+#pathButton:hover {
+    -fx-background-color: #1e2124;
+}

@@ -13,19 +13,21 @@ public class Searcher {
     private Lock lock = new ReentrantLock();
     private long start = 0;
     private ArrayList<File> fileResults = new ArrayList<File>();
+    private ArrayList<File> folderResults = new ArrayList<File>();
     private FilePane[] panes;
     private TopPane tPane;
     private boolean inProgress = false;
 
     Searcher() {}
 
-    public void searchDir(String path, String name, String ext, boolean hidden) {
+    public void searchDir(String path, String name, String ext, boolean hidden, boolean folders) {
         if (inProgress == false) {
             inProgress = true;
             fileResults.clear();
+            folderResults.clear();
             threadCount = 0;
             changeThread(1);
-            SearchThread begin = new SearchThread(path, name, ext, hidden, this);
+            SearchThread begin = new SearchThread(path, name, ext, hidden, folders, this);
             start = System.nanoTime();
             begin.start();
         }
@@ -60,6 +62,14 @@ public class Searcher {
 
     public ArrayList<File> getFiles() {
         return fileResults;
+    }
+
+    public void addFolder(File folder) {
+        folderResults.add(folder);
+    }
+
+    public ArrayList<File> getFolders() {
+        return folderResults;
     }
 
     public Pair<Double, String> getFormatSize(double size) {
