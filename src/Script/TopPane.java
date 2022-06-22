@@ -79,8 +79,11 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         img.fitHeightProperty().bind(pathButton.heightProperty());
         pathButton.setGraphic(img);
         pathButton.setOnAction((event) ->  {
+            File file;
             chooser.setInitialDirectory(new File(pathField.getText()));
-            pathField.setText(chooser.showDialog(mainStage).toString());
+            if ((file = chooser.showDialog(mainStage)) != null) {
+                pathField.setText(file.toString());
+            }
         });
         conField.setOnKeyPressed(enter);
         extField.setOnKeyPressed(enter);

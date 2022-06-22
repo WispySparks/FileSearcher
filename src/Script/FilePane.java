@@ -13,12 +13,14 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 public class FilePane extends GridPane {
@@ -30,14 +32,13 @@ public class FilePane extends GridPane {
         SIZE,
         PATH
     }
+    private static String alpha = "abcdefghijklmnopqrstuvwxyz";
+    private static char[] alphabet = alpha.toCharArray();
     private Searcher searcher = null;
     private ArrayList<Label> names = new ArrayList<Label>();
     private Type purpose = null;
     private Label header = null;
     private SlidePane slidePane = null;
-    private String alpha = "abcdefghijklmnopqrstuvwxyz";
-    private char[] alphabet = alpha.toCharArray();
-    private long start = 0;
 
     FilePane(Searcher searcher, Type purpose, SlidePane slidePane) {
         this.searcher = searcher;
@@ -78,25 +79,26 @@ public class FilePane extends GridPane {
         slidePane.vvalueProperty().addListener(setHeader);
     }
 
-    public void update() {  // update the gui of the window for all of the new labels of the information
-        start = 0;
+    public void update(ArrayList<File> files, ArrayList<File> folders) {  // update the gui of the window for all of the new labels of the information
         Platform.runLater(new Runnable() {
             int i = 1;
-            int folders = 0;
+            int foldFile = 0;
             @Override
             public void run() {
-                if (folders == 0) getChildren().removeAll(names);     // remove previous labels
+                if (foldFile == 0) getChildren().removeAll(names);     // remove previous labels
                 Label label = null;
                 ArrayList<File> sorted = null;
-                start = System.nanoTime();
-                sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles()); 
-                System.out.println("Sorting Took: " + (double) (System.nanoTime()-start)/1000000000 + " Seconds");
+                // sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles());
+                sorted = (foldFile == 0) ? folders : files; 
                 for (File file : sorted) {
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
-                            ImageView img = (folders == 0) ? new ImageView(new Image("file:./resources/foldericon.png")) : new ImageView(new Image("file:./resources/fileicon.png"));
+                            ImageView img = (foldFile == 0) ? new ImageView(new Image("file:./resources/foldericon.png")) : new ImageView(new Image("file:./resources/fileicon.png"));
                             label.setGraphic(img);
+                            Tooltip tp = new Tooltip(file.getAbsolutePath());   // add tooltip to name label for its path
+                            tp.setShowDelay(new Duration(100));
+                            Tooltip.install(label, tp);
                             break;
                         case DATE:
                             Instant instance = Instant.ofEpochMilli(file.lastModified());
@@ -105,11 +107,11 @@ public class FilePane extends GridPane {
                             label = new Label(date.format(formatter));
                             break;
                         case EXT:
-                            label = (folders == 0) ? new Label("File folder") : new Label(getExt(file.getName()).toUpperCase() + " File");
+                            label = (foldFile == 0) ? new Label("File folder") : new Label(getExt(file.getName()).toUpperCase() + " File");
                             break;
                         case SIZE:
                             try {
-                                Pair<Double, String> p = (folders == 0) ? searcher.getFormatSize(getDirSize(file)) : searcher.getFormatSize(Files.size(Paths.get(file.getCanonicalPath())));
+                                Pair<Double, String> p = (foldFile == 0) ? searcher.getFormatSize(getDirSize(file)) : searcher.getFormatSize(Files.size(Paths.get(file.getCanonicalPath())));
                                 label = new Label(Double.toString(p.getKey()) + " "  + p.getValue());
                             } catch (IOException e) {
                                 System.out.println(e);
@@ -124,8 +126,8 @@ public class FilePane extends GridPane {
                     i++;
                     names.add(label);   // add label to names so it can be removed for a future search
                 }
-                folders++;
-                if (folders == 1) run();
+                foldFile++;
+                if (foldFile == 1) run();
             }
         });
     }
@@ -138,7 +140,7 @@ public class FilePane extends GridPane {
         return s.substring(dot, s.length());
     }
 
-    public ArrayList<File> sortFilesByAlphabet(ArrayList<File> list) {    // sort a list of files alphabetically
+    public static ArrayList<File> sortFilesByAlphabet(ArrayList<File> list) {    // sort a list of files alphabetically
         Boolean done = true;    // to know if the list is fully sorted
         ArrayList<File> list2 = new ArrayList<File>();
         for (int i = 0; i<list.size(); i++) {
@@ -168,7 +170,7 @@ public class FilePane extends GridPane {
         return list2;
     }
 
-    public int alphabetIndex(File file, int letterPos) { // find a strings position along the alphabet, letter checked is one at letterPos
+    public static int alphabetIndex(File file, int letterPos) { // find a strings position along the alphabet, letter checked is one at letterPos
         int index = -1;
         char letter;
         if (letterPos < file.getName().length()) {

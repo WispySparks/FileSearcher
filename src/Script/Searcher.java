@@ -27,14 +27,14 @@ public class Searcher {
             folderResults.clear();
             threadCount = 0;
             changeThread(1);
-            SearchThread begin = new SearchThread(path, name, ext, hidden, folders, this);
+            SearchThread begin = new SearchThread(path, name, ext, hidden, folders, this, lock);
             start = System.nanoTime();
             begin.start();
         }
     }
 
     public void changeThread(int amount) {
-        lock.lock();    // lock threadcount so that the var doesn't get screwed up by simultaneous altering
+        lock.lock();
         try {
             threadCount += amount;
         } finally {
@@ -45,8 +45,13 @@ public class Searcher {
             inProgress = false;
             System.out.println("Search has Concluded");
             System.out.println("Search Took: " + (double) (end-start)/1000000000 + " Seconds");
+            System.out.println(fileResults.size() + " " + folderResults.size());
+            long start2 = System.nanoTime();
+            ArrayList<File> sortedFiles = FilePane.sortFilesByAlphabet(fileResults);
+            ArrayList<File> sortedFolders = FilePane.sortFilesByAlphabet(folderResults);
+            System.out.println("Sorting Took: " + (double) (System.nanoTime()-start2)/1000000000 + " Seconds");
             for (FilePane pane : panes) {
-                pane.update();
+                pane.update(sortedFiles, sortedFolders);
             }
             tPane.update();
         }

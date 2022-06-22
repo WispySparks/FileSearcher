@@ -2,6 +2,7 @@ package Script;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
 
 public class SearchThread extends Thread {
 
@@ -11,19 +12,21 @@ public class SearchThread extends Thread {
     private boolean hidden = false;
     private boolean matchFolders = false;
     private Searcher searcher = null;
+    private Lock lock = null;
     private ArrayList<File> directories = new ArrayList<File>(); // directories to check
     private ArrayList<File> doneDirs = new ArrayList<File>(); // directories that have been done and to remove
     private File[] files = null; // file matches
     private File[] folders = null; 
     private int recursion = 0;
 
-    SearchThread(String path, String name, String ext, boolean hidden, boolean matchFolders, Searcher searcher) {
+    SearchThread(String path, String name, String ext, boolean hidden, boolean matchFolders, Searcher searcher, Lock lock) {
         this.path = path;
         this.name = name;
         this.ext = ext;
         this.hidden = hidden;
         this.matchFolders = matchFolders;
         this.searcher = searcher;
+        this.lock = lock;
     }
 
     public void run() {// I'm using File.listFiles, Files.list seems to have same results and response time but more complicated
@@ -61,14 +64,21 @@ public class SearchThread extends Thread {
         }
         if (directories.size() != 0) { 
             for (File file : directories) {
+                boolean recurs = true;
                 this.path = file.getAbsolutePath();
                 doneDirs.add(file);
-                if (searcher.getThreadCount() < Searcher.maxThreads) {
-                    SearchThread sThread = new SearchThread(path, name, ext, hidden, matchFolders, searcher);
-                    searcher.changeThread(1);
-                    sThread.start();
+                lock.lock();
+                try {
+                    if (searcher.getThreadCount() < Searcher.maxThreads) {
+                        SearchThread sThread = new SearchThread(path, name, ext, hidden, matchFolders, searcher, lock);
+                        searcher.changeThread(1);
+                        sThread.start();
+                        recurs = false;
+                    }
+                } finally {
+                    lock.unlock();
                 }
-                else {
+                if (recurs == true) {
                     recursion++;
                     run();
                     recursion--;
