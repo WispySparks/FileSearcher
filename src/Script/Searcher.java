@@ -47,8 +47,8 @@ public class Searcher {
             System.out.println("Search Took: " + (double) (end-start)/1000000000 + " Seconds");
             System.out.println(fileResults.size() + " " + folderResults.size());
             long start2 = System.nanoTime();
-            ArrayList<File> sortedFiles = FilePane.sortFilesByAlphabet(fileResults);
-            ArrayList<File> sortedFolders = FilePane.sortFilesByAlphabet(folderResults);
+            ArrayList<File> sortedFiles = FilePane.quickSortFiles(fileResults);
+            ArrayList<File> sortedFolders = FilePane.quickSortFiles(folderResults);
             System.out.println("Sorting Took: " + (double) (System.nanoTime()-start2)/1000000000 + " Seconds");
             for (FilePane pane : panes) {
                 pane.update(sortedFiles, sortedFolders);

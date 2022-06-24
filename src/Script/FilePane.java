@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
@@ -88,7 +90,6 @@ public class FilePane extends GridPane {
                 if (foldFile == 0) getChildren().removeAll(names);     // remove previous labels
                 Label label = null;
                 ArrayList<File> sorted = null;
-                // sorted = (folders == 0) ? sortFilesByAlphabet(searcher.getFolders()) : sortFilesByAlphabet(searcher.getFiles());
                 sorted = (foldFile == 0) ? folders : files; 
                 for (File file : sorted) {
                     switch (purpose) {  // create all the labels based on its purpose
@@ -140,34 +141,23 @@ public class FilePane extends GridPane {
         return s.substring(dot, s.length());
     }
 
-    public static ArrayList<File> sortFilesByAlphabet(ArrayList<File> list) {    // sort a list of files alphabetically
-        Boolean done = true;    // to know if the list is fully sorted
-        ArrayList<File> list2 = new ArrayList<File>();
-        for (int i = 0; i<list.size(); i++) {
-            int index = 0;
-            int nextIndex = 0;
-            for (int j = 0; j<3; j++) {     // j < value, letter precision of where the file's name is along the alphabet
-                index = alphabetIndex(list.get(i), j);
-                nextIndex = 27;
-                if (i != list.size()-1) {
-                    nextIndex = alphabetIndex(list.get(i+1), j);
-                }
-                if (nextIndex != index) break;  // letters arent the same, break early
-            }
-            if (nextIndex < index) {    // compares next name with this name to see if they should be swapped
-                list2.add(list.get(i+1));
-                list2.add(list.get(i));
-                i++;
-                done = false;
-            }
-            else {  // else just add this name normally without swapping
-                list2.add(list.get(i));
-            }
+    public static ArrayList<File> quickSortFiles(ArrayList<File> list) {
+        QuickSort qs = new QuickSort();
+        int[] values = new int[list.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = alphabetIndex(list.get(i), 3);
         }
-        if (done == false) {    // list still had swaps so keep going until it doesn't
-            return sortFilesByAlphabet(list2);
+        HashMap<Integer, File> hashMap = new HashMap<Integer, File>();
+        for (int i = 0; i < values.length; i++) {
+            hashMap.put(values[i], list.get(i));
         }
-        return list2;
+        if (values.length > 0) {
+            qs.sort(values, 0, values.length-1);
+        }
+        for (int i : values) {
+            System.out.println(hashMap.get(i));
+        }
+        return list;
     }
 
     public static int alphabetIndex(File file, int letterPos) { // find a strings position along the alphabet, letter checked is one at letterPos
@@ -202,4 +192,34 @@ public class FilePane extends GridPane {
         final double y = (this.getHeight() - slidePane.getViewportBounds().getHeight()) * slidePane.getVvalue();
         header.setTranslateY(y);
     });
+
+    // public static ArrayList<File> sortFilesByAlphabet(ArrayList<File> list) { // sort a list of files alphabetically // bubble sort ig
+    //     Boolean done = true;    // to know if the list is fully sorted
+    //     ArrayList<File> list2 = new ArrayList<File>();
+    //     for (int i = 0; i<list.size(); i++) {
+    //         int index = 0;
+    //         int nextIndex = 0;
+    //         for (int j = 0; j<3; j++) {     // j < value, letter precision of where the file's name is along the alphabet
+    //             index = alphabetIndex(list.get(i), j);
+    //             nextIndex = 27;
+    //             if (i != list.size()-1) {
+    //                 nextIndex = alphabetIndex(list.get(i+1), j);
+    //             }
+    //             if (nextIndex != index) break;  // letters arent the same, break early
+    //         }
+    //         if (nextIndex < index) {    // compares next name with this name to see if they should be swapped
+    //             list2.add(list.get(i+1));
+    //             list2.add(list.get(i));
+    //             i++;
+    //             done = false;
+    //         }
+    //         else {  // else just add this name normally without swapping
+    //             list2.add(list.get(i));
+    //         }
+    //     }
+    //     if (done == false) {    // list still had swaps so keep going until it doesn't
+    //         return sortFilesByAlphabet(list2);
+    //     }
+    //     return list2;
+    // }
 }
