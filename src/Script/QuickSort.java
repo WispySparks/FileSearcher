@@ -4,15 +4,15 @@ import javafx.util.Pair;
 
 public class QuickSort {
 
-    public int[] swap(int[] arr, int i, int j) {
-        int temp = arr[i];
+    public double[] swap(double[] arr, int i, int j) {
+        double temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
         return arr;
     }
 
-    public Pair<int[], Integer> split(int[] arr, int start, int end) {
-        int pivot = arr[end];
+    public Pair<double[], Integer> split(double[] arr, int start, int end) {
+        double pivot = arr[end];
         int j = start-1;
         for (int i = start; i<end; i++) {
             if (arr[i] < pivot) {
@@ -21,11 +21,11 @@ public class QuickSort {
             }
         }
         arr = swap(arr, j+1, end);
-        return new Pair<int[],Integer>(arr, j+1);
+        return new Pair<double[],Integer>(arr, j+1);
     }
 
-    public int[] sort (int[] arr, int start, int end) {
-        Pair<int[], Integer> pair = split(arr, start, end);
+    public double[] sort (double[] arr, int start, int end) {
+        Pair<double[], Integer> pair = split(arr, start, end);
         arr = pair.getKey();
         int pivotLoc = pair.getValue();
         if (pivotLoc+1 < end) {

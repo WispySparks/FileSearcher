@@ -143,24 +143,25 @@ public class FilePane extends GridPane {
 
     public static ArrayList<File> quickSortFiles(ArrayList<File> list) {
         QuickSort qs = new QuickSort();
-        int[] values = new int[list.size()];
+        double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = alphabetIndex(list.get(i), 3);
+            values[i] = alphabetIndex(list.get(i), 0, i*0.001);
         }
-        HashMap<Integer, File> hashMap = new HashMap<Integer, File>();
+        HashMap<Double, File> hashMap = new HashMap<Double, File>();
         for (int i = 0; i < values.length; i++) {
             hashMap.put(values[i], list.get(i));
         }
         if (values.length > 0) {
             qs.sort(values, 0, values.length-1);
         }
-        for (int i : values) {
-            System.out.println(hashMap.get(i));
+        list.clear();
+        for (double i : values) {
+            list.add(hashMap.get(i));
         }
         return list;
     }
 
-    public static int alphabetIndex(File file, int letterPos) { // find a strings position along the alphabet, letter checked is one at letterPos
+    public static double alphabetIndex(File file, int letterPos, double offset) { // find a strings position along the alphabet, letter checked is one at letterPos
         int index = -1;
         char letter;
         if (letterPos < file.getName().length()) {
@@ -172,10 +173,10 @@ public class FilePane extends GridPane {
         for (int i = 0; i<alphabet.length; i++) {
             if (letter == alphabet[i]) {
                 index = i;
-                return index;
+                return index+offset;
             }
         }
-        return index;
+        return index+offset;
     }
 
     public long getDirSize(File folder) {
