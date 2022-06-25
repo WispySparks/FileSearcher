@@ -34,7 +34,7 @@ public class FilePane extends GridPane {
         SIZE,
         PATH
     }
-    private static String alpha = "abcdefghijklmnopqrstuvwxyz";
+    private static String alpha = "!._0123456789abcdefghijklmnopqrstuvwxyz";
     private static char[] alphabet = alpha.toCharArray();
     private Searcher searcher = null;
     private ArrayList<Label> names = new ArrayList<Label>();
@@ -145,35 +145,43 @@ public class FilePane extends GridPane {
         QuickSort qs = new QuickSort();
         double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = alphabetIndex(list.get(i), 0, i*0.001);
+            values[i] = alphabetIndex(list.get(i), 4, i*0.0000000000000000001);     // get a list of values corresponding to each file
         }
         HashMap<Double, File> hashMap = new HashMap<Double, File>();
         for (int i = 0; i < values.length; i++) {
-            hashMap.put(values[i], list.get(i));
+            hashMap.put(values[i], list.get(i));    // pair each value with its file
         }
         if (values.length > 0) {
-            qs.sort(values, 0, values.length-1);
+            qs.sort(values, 0, values.length-1);    // sort the values
         }
         list.clear();
         for (double i : values) {
-            list.add(hashMap.get(i));
+            list.add(hashMap.get(i));   // get the files from the sorted values
         }
         return list;
     }
 
     public static double alphabetIndex(File file, int letterPos, double offset) { // find a strings position along the alphabet, letter checked is one at letterPos
-        int index = -1;
+        double index = -1;
         char letter;
-        if (letterPos < file.getName().length()) {
-            letter = file.getName().toLowerCase().charAt(letterPos);
-        }
-        else {
-            letter = file.getName().toLowerCase().charAt(file.getName().length()-1);
-        }
-        for (int i = 0; i<alphabet.length; i++) {
-            if (letter == alphabet[i]) {
-                index = i;
-                return index+offset;
+        if (file != null) {
+            for (int j = 0; j <= letterPos; j++) {
+                if (j < file.getName().length()) {
+                    letter = file.getName().toLowerCase().charAt(j);
+                }
+                else {
+                    break;
+                }
+                for (int i = 0; i<alphabet.length; i++) {
+                    if (letter == alphabet[i]) {
+                        if (j == 0) {
+                            index = i/(j+1);
+                        }
+                        else {
+                            index += (double) i/(Math.pow(10, 2+(j*2)));
+                        }
+                    }
+                }
             }
         }
         return index+offset;
