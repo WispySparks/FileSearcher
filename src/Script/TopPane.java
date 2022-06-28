@@ -51,7 +51,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         Button startButton = new Button("Search");
         Button pathButton = new Button();
         Label pathLabel = new Label("Path:");
-        pathField = new TextField("C:/Users/Wispy/");
+        pathField = new TextField("C:/Users/Wispy/downloads/");
         hiddenBox = new CheckBox("Check Hidden Files");
         folderBox = new CheckBox("Include Folders in Results");
         loading = new Text("");
