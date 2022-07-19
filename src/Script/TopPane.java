@@ -51,7 +51,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         Button startButton = new Button("Search");
         Button pathButton = new Button();
         Label pathLabel = new Label("Path:");
-        pathField = new TextField("C:/Users/Wispy/downloads/");
+        pathField = new TextField("C:/Users/Wispy");
         hiddenBox = new CheckBox("Check Hidden Files");
         folderBox = new CheckBox("Include Folders in Results");
         loading = new Text("");
@@ -81,9 +81,18 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         pathButton.setOnAction((event) ->  {
             File file;
             chooser.setInitialDirectory(new File(pathField.getText()));
-            if ((file = chooser.showDialog(mainStage)) != null) {
-                pathField.setText(file.toString());
+            try {
+                if ((file = chooser.showDialog(mainStage)) != null) {
+                    pathField.setText(file.toString());
+                }
             }
+            catch (IllegalArgumentException e) {
+                chooser.setInitialDirectory(new File("C:/Users/Wispy"));
+                if ((file = chooser.showDialog(mainStage)) != null) {
+                    pathField.setText(file.toString());
+                }
+            }
+            
         });
         conField.setOnKeyPressed(enter);
         extField.setOnKeyPressed(enter);

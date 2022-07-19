@@ -62,7 +62,7 @@ public class SearchThread extends Thread {
                 searcher.addFolder(file);
             }
         }
-        if (directories.size() != 0) { 
+        if (directories.size() > 0) { 
             for (File file : directories) {
                 boolean recurs = true;
                 this.path = file.getAbsolutePath();

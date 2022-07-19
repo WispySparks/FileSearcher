@@ -122,6 +122,7 @@ public class FilePane extends GridPane {
                             label = new Label(file.getAbsolutePath());
                             break;
                     }
+                    label.setVisible(false);
                     setConstraints(label, 0, i); // put the labels in the right cell
                     getChildren().add(label);   // add label to pane
                     i++;
@@ -145,14 +146,15 @@ public class FilePane extends GridPane {
         QuickSort qs = new QuickSort();
         double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = alphabetIndex(list.get(i), 4, i*0.0000000000000000001);     // get a list of values corresponding to each file
+            values[i] = alphabetIndex(list.get(i), 4, i*0.00000000001);     // get a list of values corresponding to each file
         }
         HashMap<Double, File> hashMap = new HashMap<Double, File>();
         for (int i = 0; i < values.length; i++) {
             hashMap.put(values[i], list.get(i));    // pair each value with its file
         }
         if (values.length > 0) {
-            qs.sort(values, 0, values.length-1);    // sort the values
+            qs.recursiveSort(values, 0, values.length-1);    // sort the values
+            // qs.interativeSort(values);
         }
         list.clear();
         for (double i : values) {
