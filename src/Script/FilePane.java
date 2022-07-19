@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
@@ -41,6 +41,8 @@ public class FilePane extends GridPane {
     private Type purpose = null;
     private Label header = null;
     private SlidePane slidePane = null;
+    private ArrayList<File> files = null;
+    private ArrayList<File> folders = null;
 
     FilePane(Searcher searcher, Type purpose, SlidePane slidePane) {
         this.searcher = searcher;
@@ -82,16 +84,27 @@ public class FilePane extends GridPane {
     }
 
     public void update(ArrayList<File> files, ArrayList<File> folders) {  // update the gui of the window for all of the new labels of the information
+        this.files = files;
+        this.folders = folders;
         Platform.runLater(new Runnable() {
-            int i = 1;
-            int foldFile = 0;
-            @Override
-            public void run() {
-                if (foldFile == 0) getChildren().removeAll(names);     // remove previous labels
-                Label label = null;
-                ArrayList<File> sorted = null;
-                sorted = (foldFile == 0) ? folders : files; 
-                for (File file : sorted) {
+        int foldFile = 0;
+        int i = 1;
+        @Override
+        public void run() {
+            if (foldFile == 0) getChildren().removeAll(names);     // remove previous labels
+            Label label = null;
+            ArrayList<File> sorted = null;
+            sorted = (foldFile == 0) ? folders : files;
+            Pair<Integer, Integer> minMax = getMinMax(sorted);
+            for (File file : sorted) {
+                Label blank = new Label();
+                setConstraints(blank, 0, i);
+                getChildren().add(blank);
+                i++;
+            }
+            if (sorted.size() > 0) {
+                for (int j = minMax.getKey(); j<minMax.getValue(); j++) {
+                    File file = sorted.get(j);
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
@@ -122,24 +135,15 @@ public class FilePane extends GridPane {
                             label = new Label(file.getAbsolutePath());
                             break;
                     }
-                    label.setVisible(false);
-                    setConstraints(label, 0, i); // put the labels in the right cell
+                    setConstraints(label, 0, j); // put the labels in the right cell
                     getChildren().add(label);   // add label to pane
-                    i++;
+                    // i++;
                     names.add(label);   // add label to names so it can be removed for a future search
                 }
-                foldFile++;
-                if (foldFile == 1) run();
             }
-        });
-    }
-
-    public String getExt(String s) {    // get a file's extension
-        int dot = s.lastIndexOf(".") + 1;
-        if (dot == -1) {
-            dot = 0;
-        }
-        return s.substring(dot, s.length());
+            foldFile++;
+            if (foldFile == 1) run();
+        }});
     }
 
     public static ArrayList<File> quickSortFiles(ArrayList<File> list) {
@@ -199,38 +203,28 @@ public class FilePane extends GridPane {
         return size;
     }
 
+    public String getExt(String s) {    // get a file's extension
+        int dot = s.lastIndexOf(".") + 1;
+        if (dot == -1) {
+            dot = 0;
+        }
+        return s.substring(dot, s.length());
+    }
+
+    public <T> Pair<Integer, Integer> getMinMax(List<T> list) {
+        // String equation = "ŷ = 0.05667X + 12.09285";
+        int renderedTiles = 12;
+        double x = slidePane.getContent().getBoundsInLocal().getHeight() * slidePane.getVvalue();
+        int middle = (int) Math.round((0.05667*x) + 12.09285);
+        int min = ((middle-renderedTiles) >= 0) ? middle-renderedTiles : 0;
+        int max = ((middle+renderedTiles) < list.size()) ? middle+renderedTiles : list.size();
+        return new Pair<Integer,Integer>(min, max);
+    }
+
     InvalidationListener setHeader = (o -> {    // keep the header labels at the top of the page even when scrolling down
         final double y = (this.getHeight() - slidePane.getViewportBounds().getHeight()) * slidePane.getVvalue();
         header.setTranslateY(y);
+        update(files, folders);
     });
 
-    // public static ArrayList<File> sortFilesByAlphabet(ArrayList<File> list) { // sort a list of files alphabetically // bubble sort ig
-    //     Boolean done = true;    // to know if the list is fully sorted
-    //     ArrayList<File> list2 = new ArrayList<File>();
-    //     for (int i = 0; i<list.size(); i++) {
-    //         int index = 0;
-    //         int nextIndex = 0;
-    //         for (int j = 0; j<3; j++) {     // j < value, letter precision of where the file's name is along the alphabet
-    //             index = alphabetIndex(list.get(i), j);
-    //             nextIndex = 27;
-    //             if (i != list.size()-1) {
-    //                 nextIndex = alphabetIndex(list.get(i+1), j);
-    //             }
-    //             if (nextIndex != index) break;  // letters arent the same, break early
-    //         }
-    //         if (nextIndex < index) {    // compares next name with this name to see if they should be swapped
-    //             list2.add(list.get(i+1));
-    //             list2.add(list.get(i));
-    //             i++;
-    //             done = false;
-    //         }
-    //         else {  // else just add this name normally without swapping
-    //             list2.add(list.get(i));
-    //         }
-    //     }
-    //     if (done == false) {    // list still had swaps so keep going until it doesn't
-    //         return sortFilesByAlphabet(list2);
-    //     }
-    //     return list2;
-    // }
 }
