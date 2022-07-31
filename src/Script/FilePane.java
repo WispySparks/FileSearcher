@@ -88,7 +88,6 @@ public class FilePane extends GridPane {
         this.folders = folders;
         Platform.runLater(new Runnable() {
         int foldFile = 0;
-        int i = 1;
         @Override
         public void run() {
             if (foldFile == 0) getChildren().removeAll(names);     // remove previous labels
@@ -96,12 +95,6 @@ public class FilePane extends GridPane {
             ArrayList<File> sorted = null;
             sorted = (foldFile == 0) ? folders : files;
             Pair<Integer, Integer> minMax = getMinMax(sorted);
-            for (File file : sorted) {
-                Label blank = new Label();
-                setConstraints(blank, 0, i);
-                getChildren().add(blank);
-                i++;
-            }
             if (sorted.size() > 0) {
                 for (int j = minMax.getKey(); j<minMax.getValue(); j++) {
                     File file = sorted.get(j);
@@ -137,7 +130,6 @@ public class FilePane extends GridPane {
                     }
                     setConstraints(label, 0, j); // put the labels in the right cell
                     getChildren().add(label);   // add label to pane
-                    // i++;
                     names.add(label);   // add label to names so it can be removed for a future search
                 }
             }
@@ -211,13 +203,13 @@ public class FilePane extends GridPane {
         return s.substring(dot, s.length());
     }
 
-    public <T> Pair<Integer, Integer> getMinMax(List<T> list) {
-        // String equation = "ŷ = 0.05667X + 12.09285";
-        int renderedTiles = 12;
-        double x = slidePane.getContent().getBoundsInLocal().getHeight() * slidePane.getVvalue();
-        int middle = (int) Math.round((0.05667*x) + 12.09285);
-        int min = ((middle-renderedTiles) >= 0) ? middle-renderedTiles : 0;
-        int max = ((middle+renderedTiles) < list.size()) ? middle+renderedTiles : list.size();
+    public <T> Pair<Integer, Integer> getMinMax(List<T> list) { // this is supposed to grab the min and max number for the tiles that need to be rendered
+        // String equation = "ŷ = 0.05667X + 12.09285"; // linear regression equation
+        int renderedTiles = 12; // number of cells in each direction to be rendered
+        double x = slidePane.getContent().getBoundsInLocal().getHeight() * slidePane.getVvalue(); // get scrollbar value
+        int middle = (int) Math.round((0.05667*x) + 12.09285); // put it in equation to get row index of middle tile for that value
+        int min = ((middle-renderedTiles) >= 0) ? middle-renderedTiles : 0; // make sure min doesnt go below zero
+        int max = ((middle+renderedTiles) < list.size()) ? middle+renderedTiles : list.size(); // make sure max doesnt go above size
         return new Pair<Integer,Integer>(min, max);
     }
 
