@@ -1,6 +1,7 @@
-package Script;
+package main.java.FileSearch.Display;
 
 import java.io.File;
+
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -21,6 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import main.java.FileSearch.Searcher;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     
@@ -33,7 +35,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     private CheckBox folderBox;
     private Text loading;
 
-    TopPane(Searcher searcher, Stage mainStage) {
+    public TopPane(Searcher searcher, Stage mainStage) {
         this.searcher = searcher;
         this.mainStage = mainStage;
         setUp();

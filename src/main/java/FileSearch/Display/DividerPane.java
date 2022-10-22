@@ -1,10 +1,11 @@
-package Script;
+package main.java.FileSearch.Display;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
+import main.java.FileSearch.Searcher;
 
 public class DividerPane extends SplitPane {
     

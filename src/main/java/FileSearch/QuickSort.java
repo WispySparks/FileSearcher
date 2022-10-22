@@ -1,4 +1,4 @@
-package Script;
+package main.java.FileSearch;
 
 import java.util.Stack;
 

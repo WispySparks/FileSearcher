@@ -1,10 +1,12 @@
-package Script;
+package main.java.FileSearch;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import main.java.FileSearch.Display.SlidePane;
+import main.java.FileSearch.Display.TopPane;
 
 public class Main extends Application {     // Application and Stage is the JFrame, Scene and Pane is the JPanel
     public static void main(String[] args){

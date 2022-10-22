@@ -1,13 +1,14 @@
-package Script;
+package main.java.FileSearch.Display;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
+import main.java.FileSearch.Searcher;
 
 public class SlidePane extends ScrollPane {
     
     private Searcher searcher;
 
-    SlidePane(Searcher searcher) {
+    public SlidePane(Searcher searcher) {
         this.searcher = searcher;
         setUp();
     }
