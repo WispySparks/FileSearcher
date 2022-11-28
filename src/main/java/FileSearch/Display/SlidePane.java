@@ -1,8 +1,8 @@
-package FileSearch.Display;
+package main.java.FileSearch.Display;
 
-import FileSearch.Searcher;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
+import main.java.FileSearch.Searcher;
 
 public class SlidePane extends ScrollPane {
     

@@ -1,4 +1,4 @@
-package FileSearch.Display;
+package main.java.FileSearch.Display;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import FileSearch.QuickSort;
-import FileSearch.Searcher;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
@@ -27,6 +25,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import main.java.FileSearch.QuickSort;
+import main.java.FileSearch.Searcher;
 
 public class FilePane extends GridPane {
 
@@ -104,7 +104,7 @@ public class FilePane extends GridPane {
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
-                            ImageView img = (foldFile == 0) ? new ImageView(new Image("file:./resources/foldericon.png")) : new ImageView(new Image("file:./resources/fileicon.png"));
+                            ImageView img = (foldFile == 0) ? new ImageView(new Image(getClass().getResource("/main/resources/foldericon.png").toExternalForm())) : new ImageView(new Image(getClass().getResource("/main/resources/fileicon.png").toExternalForm()));
                             label.setGraphic(img);
                             Tooltip tp = new Tooltip(file.getAbsolutePath());   // add tooltip to name label for its path
                             tp.setShowDelay(new Duration(100));

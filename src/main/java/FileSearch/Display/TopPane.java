@@ -1,8 +1,7 @@
-package FileSearch.Display;
+package main.java.FileSearch.Display;
 
 import java.io.File;
 
-import FileSearch.Searcher;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -23,6 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import main.java.FileSearch.Searcher;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     
@@ -75,7 +75,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         pathButton.setMaxHeight(25.6);
         pathButton.setMaxWidth(28);
         pathButton.setId("pathButton");
-        ImageView img = new ImageView(new Image("file:./resources/filexplorer.png"));
+        ImageView img = new ImageView(new Image(getClass().getResource("/main/resources/filexplorer.png").toExternalForm()));
         img.setPreserveRatio(true);
         img.fitWidthProperty().bind(pathButton.widthProperty());
         img.fitHeightProperty().bind(pathButton.heightProperty());

@@ -1,12 +1,12 @@
-package FileSearch;
+package main.java.FileSearch;
 
-import FileSearch.Display.SlidePane;
-import FileSearch.Display.TopPane;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import main.java.FileSearch.Display.SlidePane;
+import main.java.FileSearch.Display.TopPane;
 
 public class Main extends Application {     // Application and Stage is the JFrame, Scene and Pane is the JPanel
     public static void main(String[] args){
@@ -19,8 +19,8 @@ public class Main extends Application {     // Application and Stage is the JFra
     public void start(Stage mainStage) throws Exception {    // first method that gets called after app is launched
         BorderPane borderPane = new BorderPane(new SlidePane(searcher), new TopPane(searcher, mainStage), null, null, null);
         Scene mainScene = new Scene(borderPane, 775, 500);
-        mainScene.getStylesheets().add("file:./resources/stylesheet.css");
-        mainStage.getIcons().add(new Image("file:./resources/Wiggle.png"));
+        mainScene.getStylesheets().add(getClass().getResource("/main/resources/stylesheet.css").toExternalForm());
+        mainStage.getIcons().add(new Image(getClass().getResource("/main/resources/Wiggle.png").toExternalForm()));
         mainStage.setTitle("File Searcher");
         mainStage.setScene(mainScene);
         mainStage.show();

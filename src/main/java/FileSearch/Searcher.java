@@ -1,13 +1,13 @@
-package FileSearch;
+package main.java.FileSearch;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import FileSearch.Display.FilePane;
-import FileSearch.Display.TopPane;
 import javafx.util.Pair;
+import main.java.FileSearch.Display.FilePane;
+import main.java.FileSearch.Display.TopPane;
 
 public class Searcher {
 
