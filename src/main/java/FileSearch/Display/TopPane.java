@@ -1,7 +1,8 @@
-package main.java.FileSearch.Display;
+package FileSearch.Display;
 
 import java.io.File;
 
+import FileSearch.Searcher;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -22,7 +23,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import main.java.FileSearch.Searcher;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     

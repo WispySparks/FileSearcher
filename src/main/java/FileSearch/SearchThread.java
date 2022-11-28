@@ -1,4 +1,4 @@
-package main.java.FileSearch;
+package FileSearch;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package main.java.FileSearch.Display;
+package FileSearch.Display;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import FileSearch.QuickSort;
+import FileSearch.Searcher;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
@@ -25,8 +27,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import main.java.FileSearch.QuickSort;
-import main.java.FileSearch.Searcher;
 
 public class FilePane extends GridPane {
 
