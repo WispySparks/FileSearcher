@@ -1,8 +1,0 @@
-{
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "files.exclude": {
-        ".gradle": true,
-        "gradle": true,
-        "bin": true
-    },
-}
