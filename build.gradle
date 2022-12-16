@@ -24,3 +24,5 @@ javafx {
 application {
     mainClass = 'FileSearcher.Main'
 }
+
+defaultTasks 'clean'
