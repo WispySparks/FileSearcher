@@ -104,7 +104,7 @@ public class FilePane extends GridPane {
                     switch (purpose) {  // create all the labels based on its purpose
                         case NAME:
                             label = new Label(file.getName());
-                            ImageView img = (foldFile == 0) ? new ImageView(new Image(getClass().getResourceAsStream("/foldericon.png"))) : new ImageView(new Image(getClass().getResourceAsStream("/fileicon.png")));
+                            ImageView img = (foldFile == 0) ? new ImageView(new Image(getClass().getResourceAsStream("/images/foldericon.png"))) : new ImageView(new Image(getClass().getResourceAsStream("/images/fileicon.png")));
                             label.setGraphic(img);
                             Tooltip tp = new Tooltip(file.getAbsolutePath());   // add tooltip to name label for its path
                             tp.setShowDelay(new Duration(100));

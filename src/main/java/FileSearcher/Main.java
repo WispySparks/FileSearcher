@@ -22,7 +22,7 @@ public class Main extends Application {
         BorderPane borderPane = new BorderPane(new SlidePane(searcher), new TopPane(searcher, mainStage), null, null, null);
         Scene mainScene = new Scene(borderPane, 775, 500);
         mainScene.getStylesheets().add("/stylesheet.css");
-        mainStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
+        mainStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
         mainStage.setTitle("File Searcher");
         mainStage.setScene(mainScene);
         mainStage.show();

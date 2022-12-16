@@ -75,7 +75,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         pathButton.setMaxHeight(25.6);
         pathButton.setMaxWidth(28);
         pathButton.setId("pathButton");
-        ImageView img = new ImageView(new Image(getClass().getResourceAsStream("/filexplorer.png")));
+        ImageView img = new ImageView(new Image(getClass().getResourceAsStream("/images/filexplorer.png")));
         img.setPreserveRatio(true);
         img.fitWidthProperty().bind(pathButton.widthProperty());
         img.fitHeightProperty().bind(pathButton.heightProperty());
