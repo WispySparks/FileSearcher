@@ -8,16 +8,19 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.util.Pair;
 
 public record FileData(
+    File file,
     StringProperty name,
     StringProperty path,
     StringProperty extension,
-    StringProperty dateCreated,
+    StringProperty dateModified,
     StringProperty size
 ){
     public static FileData createRecord(File file) {
@@ -27,19 +30,28 @@ public record FileData(
         Instant instance = Instant.ofEpochMilli(file.lastModified());
         LocalDateTime date = LocalDateTime.ofInstant(instance, ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy  h:mm a");
-        String dateCreated = date.format(formatter);
+        String dateModified = date.format(formatter);
         Pair<Double, String> p = (file.isDirectory()) ? getFormatedSize(getDirSize(file)) : getFormatedSize(getFileSize(file));
         String size = Double.toString(p.getKey()) + " "  + p.getValue();
         return new FileData(
-            new SimpleStringProperty(null, name), 
-            new SimpleStringProperty(null, path),
-            new SimpleStringProperty(null, extension),
-            new SimpleStringProperty(null, dateCreated),
-            new SimpleStringProperty(null, size)
+            file,
+            new SimpleStringProperty(name), 
+            new SimpleStringProperty(path),
+            new SimpleStringProperty(extension),
+            new SimpleStringProperty(dateModified),
+            new SimpleStringProperty(size)
         );
     }
 
-    public static String getExt(String s) {    // get a file's extension
+    public static List<FileData> createRecordList(List<File> files) {
+        List<FileData> list = new ArrayList<>();
+        for (File file : files) {
+            list.add(createRecord(file));
+        }
+        return list;
+    }
+
+    private static String getExt(String s) {    // get a file's extension
         int dot = s.lastIndexOf(".") + 1;
         if (dot == -1) {
             dot = 0;
@@ -47,7 +59,7 @@ public record FileData(
         return s.substring(dot, s.length());
     }
 
-    public static long getDirSize(File folder) {
+    private static long getDirSize(File folder) {
         long size = 0;
         try {
             size = Files.walk(Paths.get(folder.getCanonicalPath())).mapToLong(p -> p.toFile().length()).sum();
@@ -57,7 +69,7 @@ public record FileData(
         return size;
     }
 
-    public static long getFileSize(File file) {
+    private static long getFileSize(File file) {
         long size = 0;
         try {
             size = Files.size(Paths.get(file.getCanonicalPath()));
@@ -67,7 +79,7 @@ public record FileData(
         return size;
     }
 
-    public static Pair<Double, String> getFormatedSize(double size) {
+    private static Pair<Double, String> getFormatedSize(double size) {
         String measure = "B";
         if (size > 1024.0 && measure == "B") {
             size /= 1024.0;

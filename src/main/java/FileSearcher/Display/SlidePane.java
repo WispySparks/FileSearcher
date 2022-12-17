@@ -1,15 +1,11 @@
 package FileSearcher.Display;
 
-import FileSearcher.Searching.Searcher;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 
 public class SlidePane extends ScrollPane {
     
-    private Searcher searcher;
-
-    public SlidePane(Searcher searcher) {
-        this.searcher = searcher;
+    public SlidePane() {
         setUp();
     }
 
@@ -18,7 +14,7 @@ public class SlidePane extends ScrollPane {
         this.setPadding(new Insets(0, 0, 0, 0));
         this.setFitToWidth(true);
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        this.setContent(new DividerPane(searcher, this));
+        this.setContent(null);
     }
 
 }

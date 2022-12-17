@@ -20,9 +20,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage mainStage) throws Exception {  
-        // BorderPane borderPane = new BorderPane(new SlidePane(searcher), new TopPane(searcher, mainStage), null, null, null);
+        TopPane topPane = new TopPane(searcher, mainStage);
+        searcher.setPane(topPane);
         FileTableView table = new FileTableView(FXCollections.observableList(searcher.getResults()));
-        BorderPane borderPane = new BorderPane(table, new TopPane(searcher, mainStage), null, null, null);
+        BorderPane borderPane = new BorderPane(table, topPane, null, null, null);
         Scene mainScene = new Scene(borderPane, 775, 500);
         mainScene.getStylesheets().add("/stylesheet.css");
         mainStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));

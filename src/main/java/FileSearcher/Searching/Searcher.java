@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import FileSearcher.Display.FileData;
-import FileSearcher.Display.FilePane;
+import FileSearcher.Display.FileTableView;
 import FileSearcher.Display.TopPane;
 
 public class Searcher {
@@ -19,7 +19,6 @@ public class Searcher {
     private ArrayList<File> fileResults = new ArrayList<File>();
     private ArrayList<File> folderResults = new ArrayList<File>();
     private List<FileData> results = new ArrayList<>();
-    private FilePane[] panes;
     private TopPane tPane;
     private boolean inProgress = false;
 
@@ -28,6 +27,7 @@ public class Searcher {
             inProgress = true;
             fileResults.clear();
             folderResults.clear();
+            results.clear();
             threadCount = 0;
             changeThread(1);
             SearchThread begin = new SearchThread(path, name, ext, hidden, folders, this, lock);
@@ -50,14 +50,17 @@ public class Searcher {
             System.out.println("Search Took: " + (double) (end-start)/1000000000 + " Seconds");
             System.out.println(fileResults.size() + " " + folderResults.size());
             long start2 = System.nanoTime();
-            ArrayList<File> sortedFiles = FilePane.quickSortFiles(fileResults);
-            ArrayList<File> sortedFolders = FilePane.quickSortFiles(folderResults);
+            ArrayList<File> sortedFiles = FileTableView.quickSortFiles(fileResults);
+            ArrayList<File> sortedFolders = FileTableView.quickSortFiles(folderResults);
+            results.addAll(FileData.createRecordList(sortedFiles));
+            results.addAll(FileData.createRecordList(sortedFolders));
             System.out.println("Sorting Took: " + (double) (System.nanoTime()-start2)/1000000000 + " Seconds");
-            for (FilePane pane : panes) {
-                pane.update(sortedFiles, sortedFolders);
-            }
             tPane.update();
         }
+    }
+
+    public void setPane(TopPane p) {
+        tPane = p;
     }
 
     public int getThreadCount() {
@@ -81,8 +84,6 @@ public class Searcher {
     }
 
     public List<FileData> getResults() {
-        File f = new File("C:\\Users\\wispy\\Downloads\\ideas.txt");
-        results.add(FileData.createRecord(f));
         return results;
     }
 
