@@ -2,21 +2,22 @@ package FileSearcher.Searching;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 public class SearchThread extends Thread {
 
-    private String path = null;
-    private String name = null;
-    private String ext = null;
-    private boolean hidden = false;
-    private boolean matchFolders = false;
-    private Searcher searcher = null;
-    private Lock lock = null;
-    private ArrayList<File> directories = new ArrayList<File>(); // directories to check
-    private ArrayList<File> doneDirs = new ArrayList<File>(); // directories that have been done and to remove
-    private File[] files = null; // file matches
-    private File[] folders = null; 
+    private String path;
+    private String name;
+    private String ext;
+    private boolean hidden;
+    private boolean matchFolders;
+    private Searcher searcher;
+    private Lock lock;
+    private List<File> directories = new ArrayList<>(); // directories to check
+    private List<File> doneDirs = new ArrayList<>(); // directories that have been done and to remove
+    private List<File> results = new ArrayList<>(); // matches
     private int recursion = 0;
 
     SearchThread(String path, String name, String ext, boolean hidden, boolean matchFolders, Searcher searcher, Lock lock) {
@@ -31,37 +32,20 @@ public class SearchThread extends Thread {
 
     public void run() {// I'm using File.listFiles, Files.list seems to have same results and response time but more complicated
         File startDir = new File(path);
-        File[] newDirs = null;
+        List<File> newDirs = new ArrayList<>();
         directories.removeAll(doneDirs);
         if (hidden == false) {
-            newDirs = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden());
-            if (matchFolders == true && ext == "") folders = startDir.listFiles((file) -> file.isDirectory() && !file.isHidden() && file.getName().toLowerCase().contains(name));
+            newDirs = Arrays.asList(startDir.listFiles((file) -> file.isDirectory() && !file.isHidden()));
+            if (matchFolders) results.addAll(arrayToList(startDir.listFiles((file) -> file.isDirectory() && !file.isHidden() && file.getName().toLowerCase().contains(name))));
+            results.addAll(arrayToList(startDir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName().toLowerCase()).contains(name))));
         }
         else {
-            newDirs = startDir.listFiles((file) -> file.isDirectory());
-            if (matchFolders == true && ext == "") folders = startDir.listFiles((file) -> file.isDirectory() && file.getName().toLowerCase().contains(name));
+            newDirs = Arrays.asList(startDir.listFiles((file) -> file.isDirectory()));
+            if (matchFolders) results.addAll(arrayToList(startDir.listFiles((file) -> file.isDirectory() && file.getName().toLowerCase().contains(name))));
+            results.addAll(arrayToList(startDir.listFiles((file) -> file.isFile() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName()).contains(name))));
         }
-        if (newDirs != null) {
-            for (File dir : newDirs) {
-                directories.add(dir);
-            }
-        }
-        if (hidden == false) {
-            files = startDir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName().toLowerCase()).contains(name));
-        }
-        else {
-            files = startDir.listFiles((file) -> file.isFile() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName()).contains(name));
-        }
-        if (files != null) {
-            for (File file : files) {
-                searcher.addFile(file);
-            }
-        }
-        if (folders != null) {
-            for (File file : folders) {
-                searcher.addFolder(file);
-            }
-        }
+        results.forEach((file) -> searcher.addResult(file));
+        newDirs.forEach((dir) -> directories.add(dir));
         if (directories.size() > 0) { 
             for (File file : directories) {
                 boolean recurs = true;
@@ -91,11 +75,19 @@ public class SearchThread extends Thread {
         }
     }
 
-    public String chopExt(String s) {
+    private String chopExt(String s) {
         int dot = s.lastIndexOf(".");
         if (dot == -1) {
             dot = s.length();
         }
         return s.substring(0, dot);
+    }
+
+    private <T> List<T> arrayToList(T[] array) {
+        List<T> list = new ArrayList<>();
+        for (T element : array) {
+            list.add(element);
+        }
+        return list;
     }
 }

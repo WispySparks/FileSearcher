@@ -1,6 +1,5 @@
 package FileSearcher.Display;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +19,14 @@ import javafx.util.Callback;
 
 public class FileTableView extends TableView<FileData> {
 
-    private static String alpha = "!._0123456789abcdefghijklmnopqrstuvwxyz";
-    private static char[] alphabet = alpha.toCharArray();
+    private final static String alpha = "!._0123456789abcdefghijklmnopqrstuvwxyz";
+    private final static char[] characters = alpha.toCharArray();
 
     public FileTableView(ObservableList<FileData> list) {
+        super(list);
         setBackground(new Background(new BackgroundFill(Color.rgb(54, 57, 63, 1), null, null)));
         setPadding(new Insets(0, 0, 0, 0));
-        setItems(list);
+        setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
         setup();
     }
 
@@ -49,8 +49,7 @@ public class FileTableView extends TableView<FileData> {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item == null) return; 
-                    setText(item);
+                    setText(item == null ? "" : item);
                     FileData data = this.getTableRow().getItem();
                     if (data == null) return;
                     ImageView img = (data.file().isDirectory()) ? new ImageView(new Image(getClass().getResourceAsStream("/images/foldericon.png"))) : new ImageView(new Image(getClass().getResourceAsStream("/images/fileicon.png")));
@@ -62,13 +61,13 @@ public class FileTableView extends TableView<FileData> {
         getColumns().setAll(columns);
     }
 
-    public static ArrayList<File> quickSortFiles(ArrayList<File> list) {
+    public static List<FileData> quickSortFiles(List<FileData> list) {
         QuickSort qs = new QuickSort();
         double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = alphabetIndex(list.get(i), 4, i*0.00000000001);     // get a list of values corresponding to each file
+            values[i] = alphabetIndex(list.get(i).name().getValue(), 4, i*0.00000000001);     // get a list of values corresponding to each file
         }
-        HashMap<Double, File> hashMap = new HashMap<Double, File>();
+        HashMap<Double, FileData> hashMap = new HashMap<>();
         for (int i = 0; i < values.length; i++) {
             hashMap.put(values[i], list.get(i));    // pair each value with its file
         }
@@ -83,19 +82,19 @@ public class FileTableView extends TableView<FileData> {
         return list;
     }
 
-    public static double alphabetIndex(File file, int letterPos, double offset) { // find a strings position along the alphabet, letter checked is one at letterPos
+    public static double alphabetIndex(String str, int letterPos, double offset) { // find a strings position along the alphabet, letter checked is one at letterPos
         double index = -1;
         char letter;
-        if (file != null) {
+        if (str != null) {
             for (int j = 0; j <= letterPos; j++) {
-                if (j < file.getName().length()) {
-                    letter = file.getName().toLowerCase().charAt(j);
+                if (j < str.length()) {
+                    letter = str.toLowerCase().charAt(j);
                 }
                 else {
                     break;
                 }
-                for (int i = 0; i<alphabet.length; i++) {
-                    if (letter == alphabet[i]) {
+                for (int i = 0; i<characters.length; i++) {
+                    if (letter == characters[i]) {
                         if (j == 0) {
                             index = i/(j+1);
                         }
