@@ -114,7 +114,6 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
         for (Node node : elements) {
             this.getChildren().add(node);
         }
-        searcher.setPanes(null, this);
     }
 
     public void update() {

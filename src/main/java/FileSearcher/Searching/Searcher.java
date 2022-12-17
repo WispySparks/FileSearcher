@@ -2,12 +2,13 @@ package FileSearcher.Searching;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import FileSearcher.Display.FileData;
 import FileSearcher.Display.FilePane;
 import FileSearcher.Display.TopPane;
-import javafx.util.Pair;
 
 public class Searcher {
 
@@ -17,6 +18,7 @@ public class Searcher {
     private long start = 0;
     private ArrayList<File> fileResults = new ArrayList<File>();
     private ArrayList<File> folderResults = new ArrayList<File>();
+    private List<FileData> results = new ArrayList<>();
     private FilePane[] panes;
     private TopPane tPane;
     private boolean inProgress = false;
@@ -78,31 +80,10 @@ public class Searcher {
         return folderResults;
     }
 
-    public Pair<Double, String> getFormatSize(double size) {
-        String measure = "B";
-        if (size > 1024.0 && measure == "B") {
-            size /= 1024.0;
-            measure = "KB";
-        }
-        if (size > 1024.0 && measure == "KB") {
-            size /= 1024.0;
-            measure = "MB";
-        }
-        if (size > 1024.0 && measure == "MB") {
-            size /= 1024.0;
-            measure = "GB";
-        }
-        size = Math.floor(size*100) / 100;
-        return new Pair<Double,String>(size, measure);
-    }
-
-    public void setPanes(FilePane[] panes, TopPane tPane) {
-        if (panes != null) {
-            this.panes = panes;
-        }
-        if (tPane != null) {
-            this.tPane = tPane;
-        }
+    public List<FileData> getResults() {
+        File f = new File("C:\\Users\\wispy\\Downloads\\ideas.txt");
+        results.add(FileData.createRecord(f));
+        return results;
     }
 
 }

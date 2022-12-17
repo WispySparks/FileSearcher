@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import FileSearcher.Searching.QuickSort;
-import FileSearcher.Searching.Searcher;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
@@ -39,7 +38,6 @@ public class FilePane extends GridPane {
     }
     private static String alpha = "!._0123456789abcdefghijklmnopqrstuvwxyz";
     private static char[] alphabet = alpha.toCharArray();
-    private Searcher searcher = null;
     private ArrayList<Label> names = new ArrayList<Label>();
     private Type purpose = null;
     private Label header = null;
@@ -47,8 +45,7 @@ public class FilePane extends GridPane {
     private ArrayList<File> files = null;
     private ArrayList<File> folders = null;
 
-    FilePane(Searcher searcher, Type purpose, SlidePane slidePane) {
-        this.searcher = searcher;
+    FilePane(Type purpose, SlidePane slidePane) {
         this.purpose = purpose;
         this.slidePane = slidePane;
         setUp();
@@ -120,12 +117,12 @@ public class FilePane extends GridPane {
                             label = (foldFile == 0) ? new Label("File folder") : new Label(getExt(file.getName()).toUpperCase() + " File");
                             break;
                         case SIZE:
-                            try {
-                                Pair<Double, String> p = (foldFile == 0) ? searcher.getFormatSize(getDirSize(file)) : searcher.getFormatSize(Files.size(Paths.get(file.getCanonicalPath())));
-                                label = new Label(Double.toString(p.getKey()) + " "  + p.getValue());
-                            } catch (IOException e) {
-                                System.out.println(e);
-                            }
+                            // try {
+                                // Pair<Double, String> p = (foldFile == 0) ? searcher.getFormatSize(getDirSize(file)) : searcher.getFormatSize(Files.size(Paths.get(file.getCanonicalPath())));
+                                // label = new Label(Double.toString(p.getKey()) + " "  + p.getValue());
+                            // } catch (IOException e) {
+                                // System.out.println(e);
+                            // }
                             break;
                         case PATH:
                             label = new Label(file.getAbsolutePath());
