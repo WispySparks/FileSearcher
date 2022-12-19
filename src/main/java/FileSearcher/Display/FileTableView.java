@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -37,9 +38,7 @@ public class FileTableView extends TableView<FileData> {
         extension.setCellValueFactory(data -> data.getValue().extension());
         dateModified.setCellValueFactory(data -> data.getValue().dateModified());
         size.setCellValueFactory(data -> data.getValue().size());
-        name.setCellFactory(new Callback<TableColumn<FileData,String>, TableCell<FileData,String>>() {
-            @Override 
-            public TableCell<FileData,String> call(TableColumn<FileData,String> param) {
+        name.setCellFactory((column) -> {
             return new TableCell<FileData,String>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -49,11 +48,37 @@ public class FileTableView extends TableView<FileData> {
                     if (data == null) return;
                     ImageView img = (data.file().isDirectory()) ? new ImageView(new Image(getClass().getResourceAsStream("/images/foldericon.png"))) : new ImageView(new Image(getClass().getResourceAsStream("/images/fileicon.png")));
                     setGraphic(img);
+                    setTooltip(new Tooltip(data.name().get()));
                 }
-            };};
+            };
         });
+        path.setCellFactory(defaultCellFactory);
+        extension.setCellFactory(defaultCellFactory);
+        dateModified.setCellFactory(defaultCellFactory);
+        size.setCellFactory(defaultCellFactory);
         columns.addAll(List.of(name, path, dateModified, extension, size));
         getColumns().setAll(columns);
     }
+
+    Callback<TableColumn<FileData,String>, TableCell<FileData,String>> defaultCellFactory = (column) -> {
+        TableCell<FileData, String> cell = new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(item == null ? "" : item);
+                FileData data = this.getTableRow().getItem();
+                if (data == null) return;
+                String toolTip = switch(column.getText()) {
+                    case "File Path" -> data.path().get();
+                    case "File Type" -> data.extension().get();
+                    case "Date Modified" -> data.dateModified().get();
+                    case "File Size" -> data.size().get();
+                    default -> "";
+                };
+                setTooltip(new Tooltip(toolTip));
+            }
+        };
+        return cell;
+    };
 
 }
