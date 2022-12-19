@@ -31,10 +31,4 @@ public class Main extends Application {
         mainStage.show();
     }
 
-    @Override
-    public void stop() {
-        for (Thread t : searcher.getThreads()) {
-            t.interrupt();
-        }
-    }
 }

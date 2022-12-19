@@ -3,6 +3,7 @@ package FileSearcher.Display;
 import java.io.File;
 
 import FileSearcher.Searching.Searcher;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -117,7 +118,7 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     }
 
     public void update() {
-        loading.setText("Search Finished");
+        Platform.runLater(() -> loading.setText("Search Finished"));
     }
 
     EventHandler<KeyEvent> enter = new EventHandler<KeyEvent>() {
