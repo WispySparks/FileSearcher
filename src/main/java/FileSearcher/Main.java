@@ -9,7 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class Main extends Application {   
+public class Main extends Application {  
+    
+    private Searcher searcher = new Searcher();
 
     public static void main(String[] args){
         launch(args);  
@@ -17,10 +19,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage mainStage) throws Exception {  
-        Searcher searcher = new Searcher();
         TopPane topPane = new TopPane(searcher, mainStage);
         searcher.setPane(topPane);
-        FileTableView table = new FileTableView(searcher.getResults());
+        FileTableView table = new FileTableView(searcher.getTableResults());
         BorderPane borderPane = new BorderPane(table, topPane, null, null, null);
         Scene mainScene = new Scene(borderPane, 775, 500);
         mainScene.getStylesheets().add("/stylesheet.css");
@@ -28,5 +29,12 @@ public class Main extends Application {
         mainStage.setTitle("File Searcher");
         mainStage.setScene(mainScene);
         mainStage.show();
+    }
+
+    @Override
+    public void stop() {
+        for (Thread t : searcher.getThreads()) {
+            t.interrupt();
+        }
     }
 }

@@ -2,7 +2,6 @@ package FileSearcher.Searching;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
@@ -30,17 +29,18 @@ public class SearchThread extends Thread {
         this.lock = lock;
     }
 
-    public void run() {// I'm using File.listFiles, Files.list seems to have same results and response time but more complicated
+    public void run() {
+        if (isInterrupted()) return;
         File startDir = new File(path);
         List<File> newDirs = new ArrayList<>();
         directories.removeAll(doneDirs);
         if (hidden == false) {
-            newDirs = Arrays.asList(startDir.listFiles((file) -> file.isDirectory() && !file.isHidden()));
+            newDirs = arrayToList(startDir.listFiles((file) -> file.isDirectory() && !file.isHidden()));
             if (matchFolders) results.addAll(arrayToList(startDir.listFiles((file) -> file.isDirectory() && !file.isHidden() && file.getName().toLowerCase().contains(name))));
             results.addAll(arrayToList(startDir.listFiles((file) -> file.isFile() && !file.isHidden() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName().toLowerCase()).contains(name))));
         }
         else {
-            newDirs = Arrays.asList(startDir.listFiles((file) -> file.isDirectory()));
+            newDirs = arrayToList(startDir.listFiles((file) -> file.isDirectory()));
             if (matchFolders) results.addAll(arrayToList(startDir.listFiles((file) -> file.isDirectory() && file.getName().toLowerCase().contains(name))));
             results.addAll(arrayToList(startDir.listFiles((file) -> file.isFile() && file.getName().toLowerCase().endsWith(ext) && chopExt(file.getName()).contains(name))));
         }
@@ -55,7 +55,7 @@ public class SearchThread extends Thread {
                 try {
                     if (searcher.getThreadCount() < Searcher.maxThreads) {
                         SearchThread sThread = new SearchThread(path, name, ext, hidden, matchFolders, searcher, lock);
-                        searcher.changeThread(1);
+                        searcher.changeThread(1, this);
                         sThread.start();
                         recurs = false;
                     }
@@ -71,7 +71,7 @@ public class SearchThread extends Thread {
             }
         }
         if (recursion == 0) {
-            searcher.changeThread(-1);
+            searcher.changeThread(-1, this);
         }
     }
 
@@ -85,6 +85,7 @@ public class SearchThread extends Thread {
 
     private <T> List<T> arrayToList(T[] array) {
         List<T> list = new ArrayList<>();
+        if (array == null) return list;
         for (T element : array) {
             list.add(element);
         }
