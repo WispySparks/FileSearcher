@@ -9,11 +9,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public class SearchFileVisitor implements FileVisitor<Path> {
 
-    Searcher searcher;
-    String name = "";
-    String ext = "";
-    boolean hidden = false;
-    boolean addDirectories = false;
+    private Searcher searcher;
+    private String name = "";
+    private String ext = "";
+    private boolean hidden = false;
+    private boolean addDirectories = false;
 
     SearchFileVisitor(Searcher searcher) {
         this.searcher = searcher;

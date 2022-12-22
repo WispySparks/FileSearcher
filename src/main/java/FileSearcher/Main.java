@@ -21,7 +21,7 @@ public class Main extends Application {
     public void start(Stage mainStage) throws Exception {  
         TopPane topPane = new TopPane(searcher, mainStage);
         searcher.setPane(topPane);
-        FileTableView table = new FileTableView(searcher.getTableResults());
+        FileTableView table = new FileTableView(searcher.getTableContents());
         BorderPane borderPane = new BorderPane(table, topPane, null, null, null);
         Scene mainScene = new Scene(borderPane, 775, 500);
         mainScene.getStylesheets().add("/stylesheet.css");

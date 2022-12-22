@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -27,39 +26,33 @@ import javafx.stage.Stage;
 
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     
+    private final Stage mainStage;
     private Searcher searcher;
-    private Stage mainStage;
-    private TextField conField;
-    private TextField extField;
-    private TextField pathField;
-    private CheckBox hiddenBox;
-    private CheckBox folderBox;
     private Text loading;
 
     public TopPane(Searcher searcher, Stage mainStage) {
         this.searcher = searcher;
         this.mainStage = mainStage;
-        setUp();
+        setBackground(new Background(new BackgroundFill(Color.rgb(54, 57, 63, 1), null, null)));
+        setPadding(new Insets(5, 10, 20, 10));
+        setHgap(10);
+        setVgap(5);
+        setup();
     }
 
-    private void setUp() {
-        this.setBackground(new Background(new BackgroundFill(Color.rgb(54, 57, 63, 1), null, null)));
-        this.setPadding(new Insets(5, 10, 20, 10));
-        this.setHgap(10);
-        this.setVgap(5);
+    private void setup() {
         Label conLabel = new Label("Contains:");
-        conField = new TextField();
+        TextField conField = new TextField();
         Label extLabel = new Label("Extension:");
-        extField = new TextField();
+        TextField extField = new TextField();
         Button startButton = new Button("Search");
         Button pathButton = new Button();
         Label pathLabel = new Label("Path:");
-        pathField = new TextField("C:/Users/Wispy");
-        hiddenBox = new CheckBox("Check Hidden Files");
-        folderBox = new CheckBox("Include Folders in Results");
+        TextField pathField = new TextField("C:/Users/Wispy");
+        CheckBox hiddenBox = new CheckBox("Check Hidden Files");
+        CheckBox folderBox = new CheckBox("Include Folders in Results");
         loading = new Text("");
         DirectoryChooser chooser = new DirectoryChooser();
-        Node[] elements = {conLabel, conField, extLabel, extField, startButton, pathButton, pathLabel, pathField, hiddenBox, folderBox, loading};
         conLabel.setTextFill(Color.WHITE);
         pathLabel.setTextFill(Color.WHITE);
         extLabel.setTextFill(Color.WHITE);
@@ -97,38 +90,32 @@ public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
             }
             
         });
-        conField.setOnKeyPressed(enter);
-        extField.setOnKeyPressed(enter);
-        pathField.setOnKeyPressed(enter);
-        setConstraints(conField, 1, 0);
-        setConstraints(extLabel, 2, 0);
-        setConstraints(extField, 3, 0);
-        setConstraints(hiddenBox, 4, 0);
-        setConstraints(folderBox, 5, 0);
-        setConstraints(pathLabel, 0, 1);
-        setConstraints(pathField, 1, 1, 3, 1);
-        setConstraints(pathButton, 4, 1);
-        setConstraints(startButton, 4, 1);
-        setConstraints(loading, 5, 1);
-        setHalignment(startButton, HPos.RIGHT);
-        setHalignment(loading, HPos.CENTER);
-        for (Node node : elements) {
-            this.getChildren().add(node);
-        }
-    }
-
-    public void update() {
-        Platform.runLater(() -> loading.setText("Search Finished"));
-    }
-
-    EventHandler<KeyEvent> enter = new EventHandler<KeyEvent>() {
-        @Override
-        public void handle(KeyEvent event) {
+        EventHandler<KeyEvent> enter = (event) -> {
             if (event.getCode() == KeyCode.ENTER) {
                 searcher.searchDir(pathField.getText(), conField.getText().toLowerCase(), extField.getText().toLowerCase(), hiddenBox.isSelected(), folderBox.isSelected());
                 loading.setText("Searching . . .");
             }                
-        }
-    };
+        };
+        conField.setOnKeyPressed(enter);
+        extField.setOnKeyPressed(enter);
+        pathField.setOnKeyPressed(enter);
+        add(conLabel, 0, 0);
+        add(conField, 1, 0);
+        add(extLabel, 2, 0);
+        add(extField, 3, 0);
+        add(hiddenBox, 4, 0);
+        add(folderBox, 5, 0);
+        add(pathLabel, 0, 1);
+        add(pathField, 1, 1, 3, 1);
+        add(pathButton, 4, 1);
+        add(startButton, 4, 1);
+        add(loading, 5, 1);
+        setHalignment(startButton, HPos.RIGHT);
+        setHalignment(loading, HPos.CENTER);
+    }
+
+    public void setFinished() {
+        Platform.runLater(() -> loading.setText("Search Finished"));
+    }
 
 }

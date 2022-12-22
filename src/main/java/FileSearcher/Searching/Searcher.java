@@ -16,8 +16,7 @@ import javafx.collections.ObservableList;
 public class Searcher {
 
     public static final int maxThreads = 16;
-    
-    private final ObservableList<FileData> tableResults = FXCollections.observableArrayList();
+    private final ObservableList<FileData> tableContents = FXCollections.observableArrayList();
     private final List<FileData> tempResults = new ArrayList<>();
     private final SearchFileVisitor fileVisitor = new SearchFileVisitor(this);
     private TopPane topPane;
@@ -30,13 +29,15 @@ public class Searcher {
             tempResults.clear();
             Path startDir = new File(path).toPath(); 
             fileVisitor.configure(name, ext, hidden, directories);
-            try {
+            new Thread(() -> {
                 startTime = System.nanoTime();
-                Files.walkFileTree(startDir, fileVisitor);
+                try {
+                    Files.walkFileTree(startDir, fileVisitor);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 finishSearch();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            }).start();
         }
     }
 
@@ -47,11 +48,11 @@ public class Searcher {
         long start2 = System.nanoTime();
         List<FileData> sortedFiles = Sorter.sortFiles(tempResults);
         Platform.runLater(() -> {
-            tableResults.clear();
-            tableResults.addAll(sortedFiles);
+            tableContents.clear();
+            tableContents.addAll(sortedFiles);
         });
         System.out.println("Sorting Took: " + (double) (System.nanoTime()-start2)/1000000000 + " Seconds");
-        topPane.update();
+        topPane.setFinished();
         inProgress = false;
     }
 
@@ -63,8 +64,8 @@ public class Searcher {
         tempResults.add(FileData.createRecord(file));
     }
 
-    public ObservableList<FileData> getTableResults() {
-        return tableResults;
+    public ObservableList<FileData> getTableContents() {
+        return tableContents;
     }
 
 }

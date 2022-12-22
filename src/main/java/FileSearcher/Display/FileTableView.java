@@ -61,7 +61,7 @@ public class FileTableView extends TableView<FileData> {
     }
 
     Callback<TableColumn<FileData,String>, TableCell<FileData,String>> defaultCellFactory = (column) -> {
-        TableCell<FileData, String> cell = new TableCell<>() {
+        return new TableCell<FileData,String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -78,7 +78,6 @@ public class FileTableView extends TableView<FileData> {
                 setTooltip(new Tooltip(toolTip));
             }
         };
-        return cell;
     };
 
 }
