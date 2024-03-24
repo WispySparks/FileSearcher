@@ -1,4 +1,4 @@
-package FileSearcher.Searching;
+package filesearcher.searching;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import FileSearcher.Display.FileData;
-import FileSearcher.Display.TopPane;
+import filesearcher.display.FileData;
+import filesearcher.display.TopPane;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

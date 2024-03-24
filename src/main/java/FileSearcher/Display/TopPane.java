@@ -1,8 +1,8 @@
-package FileSearcher.Display;
+package filesearcher.display;
 
 import java.io.File;
 
-import FileSearcher.Searching.Searcher;
+import filesearcher.searching.Searcher;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 public class TopPane extends GridPane {    // Split Pane, Scroll Pane, Flow Pane
     
     private final Stage mainStage;
-    private Searcher searcher;
+    private final Searcher searcher;
     private Text loading;
 
     public TopPane(Searcher searcher, Stage mainStage) {

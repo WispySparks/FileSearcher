@@ -1,4 +1,4 @@
-package FileSearcher.Searching;
+package filesearcher.searching;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,11 +9,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public class SearchFileVisitor implements FileVisitor<Path> {
 
-    private Searcher searcher;
-    private String name = "";
-    private String ext = "";
-    private boolean hidden = false;
-    private boolean addDirectories = false;
+    private final Searcher searcher;
+    private String name;
+    private String ext;
+    private boolean hidden;
+    private boolean addDirectories;
 
     SearchFileVisitor(Searcher searcher) {
         this.searcher = searcher;

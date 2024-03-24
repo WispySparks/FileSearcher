@@ -1,8 +1,8 @@
-package FileSearcher;
+package filesearcher;
 
-import FileSearcher.Display.FileTableView;
-import FileSearcher.Display.TopPane;
-import FileSearcher.Searching.Searcher;
+import filesearcher.display.FileTableView;
+import filesearcher.display.TopPane;
+import filesearcher.searching.Searcher;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;

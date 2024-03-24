@@ -1,11 +1,11 @@
-package FileSearcher.Searching;
+package filesearcher.searching;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import FileSearcher.Display.FileData;
+import filesearcher.display.FileData;
 import javafx.util.Pair;
 
 public class Sorter {
@@ -13,14 +13,14 @@ public class Sorter {
     private final static String alpha = "!._0123456789abcdefghijklmnopqrstuvwxyz";
     private final static char[] characters = alpha.toCharArray();
 
-    private double[] swap(double[] arr, int i, int j) {
+    private static double[] swap(double[] arr, int i, int j) {
         double temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
         return arr;
     }
 
-    private Pair<double[], Integer> split(double[] arr, int start, int end) {
+    private static Pair<double[], Integer> split(double[] arr, int start, int end) {
         double pivot = arr[end];
         int j = start-1;
         for (int i = start; i<end; i++) {
@@ -33,7 +33,7 @@ public class Sorter {
         return new Pair<double[],Integer>(arr, j+1);
     }
 
-    public double[] recursiveQuickSort(double[] arr, int start, int end) {
+    public static double[] recursiveQuickSort(double[] arr, int start, int end) {
         Pair<double[], Integer> pair = split(arr, start, end);
         arr = pair.getKey();
         int pivotLoc = pair.getValue();
@@ -46,7 +46,7 @@ public class Sorter {
         return arr;
     }
 
-    public double[] interativeQuickSort(double[] arr) {
+    public static double[] interativeQuickSort(double[] arr) {
         Stack<Integer> stack = new Stack<>();
         stack.push(0);
         stack.push(arr.length-1);
@@ -67,7 +67,6 @@ public class Sorter {
 
     public static List<FileData> sortFiles(List<FileData> list) {
         List<FileData> sortedList = new ArrayList<>();
-        Sorter sorter = new Sorter();
         double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
             values[i] = alphabetIndex(list.get(i).name().getValue(), 4, i*0.00000000001);     // get a list of values corresponding to each file
@@ -77,8 +76,8 @@ public class Sorter {
             hashMap.put(values[i], list.get(i));    // pair each value with its file
         }
         if (values.length > 0) {
-            sorter.recursiveQuickSort(values, 0, values.length-1);    // sort the values
-            // sorter.interativeSort(values);
+            recursiveQuickSort(values, 0, values.length-1);    // sort the values
+            // interativeSort(values);
         }
         for (double i : values) {
             sortedList.add(hashMap.get(i));   // get the files from the sorted values
@@ -86,7 +85,7 @@ public class Sorter {
         return sortedList;
     }
 
-    public static double alphabetIndex(String str, int letterPos, double offset) { // find a strings position along the alphabet, letter checked is one at letterPos
+    private static double alphabetIndex(String str, int letterPos, double offset) { // find a strings position along the alphabet, letter checked is one at letterPos
         double index = -1;
         char letter;
         if (str != null) {

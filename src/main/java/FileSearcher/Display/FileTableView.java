@@ -1,4 +1,4 @@
-package FileSearcher.Display;
+package filesearcher.display;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class FileTableView extends TableView<FileData> {
         getColumns().setAll(columns);
     }
 
-    Callback<TableColumn<FileData,String>, TableCell<FileData,String>> defaultCellFactory = (column) -> {
+    private Callback<TableColumn<FileData,String>, TableCell<FileData,String>> defaultCellFactory = (column) -> {
         return new TableCell<FileData,String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
